@@ -17,16 +17,6 @@ class FilePickerLinux extends FilePicker {
     required bool withData,
     required bool withReadStream,
   }) async {
-    if (type != FileType.custom && (allowedExtensions?.isNotEmpty ?? false)) {
-      throw ArgumentError(
-          'You are setting a type [$type]. Custom extension filters are only allowed with FileType.custom, please change it or remove filters.');
-    } else if (type == FileType.custom &&
-        (allowedExtensions?.isEmpty ?? true)) {
-      throw ArgumentError(
-        'If you are setting the file type to "custom", then a non-empty list of allowed file extensions must be provided.',
-      );
-    }
-
     final String fileFilter = fileTypeToFileFilter(type, allowedExtensions);
     final String pathToExecutable = await _getPathToExecutable();
     final String? fileSelectionResult = await _openFileSelectionDialog(

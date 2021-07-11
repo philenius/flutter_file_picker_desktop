@@ -78,6 +78,15 @@ Future<FilePickerResult?> pickFiles({
   bool withData = false,
   bool withReadStream = false,
 }) {
+  if (type != FileType.custom && (allowedExtensions?.isNotEmpty ?? false)) {
+    throw ArgumentError(
+        'You are setting a type [$type]. Custom extension filters are only allowed with FileType.custom, please change it or remove filters.');
+  } else if (type == FileType.custom && (allowedExtensions?.isEmpty ?? true)) {
+    throw ArgumentError(
+      'If you are setting the file type to "custom", then a non-empty list of allowed file extensions must be provided.',
+    );
+  }
+
   if (Platform.isLinux) {
     return FilePickerLinux().pickFiles(
       dialogTitle: dialogTitle,

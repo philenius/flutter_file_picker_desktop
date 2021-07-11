@@ -19,56 +19,6 @@ void main() {
     () => tearDownTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
   );
 
-  group('pickFiles()', () {
-    test(
-        'should throw an exception if file type is set to "custom" and no list of allowed file extensions was given',
-        () {
-      final picker = FilePickerLinux();
-
-      expect(
-        () => picker.pickFiles(
-          allowedExtensions: null,
-          allowMultiple: false,
-          dialogTitle: '',
-          type: FileType.custom,
-          withData: false,
-          withReadStream: false,
-        ),
-        throwsArgumentError,
-      );
-
-      expect(
-        () => picker.pickFiles(
-          allowedExtensions: [],
-          allowMultiple: false,
-          dialogTitle: '',
-          type: FileType.custom,
-          withData: false,
-          withReadStream: false,
-        ),
-        throwsArgumentError,
-      );
-    });
-
-    test(
-        'should throw an exception if the file type is not "custom" but a list of allowed file extensions was given',
-        () {
-      final picker = FilePickerLinux();
-
-      expect(
-        () => picker.pickFiles(
-          allowedExtensions: ['png'],
-          allowMultiple: false,
-          dialogTitle: '',
-          type: FileType.audio,
-          withData: false,
-          withReadStream: false,
-        ),
-        throwsArgumentError,
-      );
-    });
-  });
-
   group('fileTypeToFileFilter()', () {
     test('should return the file filter', () {
       final picker = FilePickerLinux();
