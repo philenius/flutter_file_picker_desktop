@@ -48,10 +48,7 @@ class FilePickerWindows extends FilePicker {
 
       return FilePickerResult(platformFiles);
     }
-    throw Exception(
-      'The selected path couldn\'t be resolved or the user closed the dialog ' +
-          'without selecting a directory.',
-    );
+    return null;
   }
 
   @override
@@ -59,6 +56,9 @@ class FilePickerWindows extends FilePicker {
     required String dialogTitle,
   }) {
     final pathIdPointer = _pickDirectory(dialogTitle);
+    if (pathIdPointer == null) {
+      return Future.value(null);
+    }
     return Future.value(
       _getPathFromItemIdentifierList(pathIdPointer),
     );
@@ -86,8 +86,8 @@ class FilePickerWindows extends FilePicker {
   /// Uses the Win32 API to display a dialog box that enables the user to select a folder.
   ///
   /// Returns a PIDL that specifies the location of the selected folder relative to the root of the
-  /// namespace. Throws an exception, if the user chooses the Cancel button in the dialog box.
-  Pointer _pickDirectory(String dialogTitle) {
+  /// namespace. Returns null, if the user clicked on the "Cancel" button in the dialog box.
+  Pointer? _pickDirectory(String dialogTitle) {
     final shell32 = DynamicLibrary.open('shell32.dll');
 
     final shBrowseForFolderW =
@@ -110,7 +110,7 @@ class FilePickerWindows extends FilePicker {
     calloc.free(browseInfo);
 
     if (itemIdentifierList == nullptr) {
-      throw Exception('User clicked on the cancel button in the dialog box.');
+      return null;
     }
     return itemIdentifierList;
   }
