@@ -1,23 +1,33 @@
 @TestOn('windows')
 
+import 'dart:io';
+
 import 'package:file_picker_desktop/file_picker_desktop.dart';
 import 'package:file_picker_desktop/src/file_picker_windows.dart';
 import 'package:test/test.dart';
-
-import 'common.dart';
 
 void main() {
   final imageTestFile = 'C:\\temp\\test_linux.jpg';
   final pdfTestFile = 'C:\\temp\\test_linux.pdf';
   final yamlTestFile = 'C:\\temp\\test_linux.yml';
 
-  setUpAll(
-    () => setUpTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
-  );
+  setUpAll(() {
+    Directory('C:\\temp').createSync();
 
-  tearDownAll(
-    () => tearDownTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
-  );
+    File(
+      '.\\test\\test_files\\franz-michael-schneeberger-unsplash.jpg',
+    ).copySync(imageTestFile);
+    File(
+      '.\\test\\test_files\\test.pdf',
+    ).copySync(pdfTestFile);
+    File(
+      '.\\test\\test_files\\test.yml',
+    ).copySync(yamlTestFile);
+  });
+
+  tearDownAll(() {
+    Directory('C:\\temp').deleteSync(recursive: true);
+  });
 
   group('fileTypeToFileFilter()', () {
     test('should return the file filter', () {
