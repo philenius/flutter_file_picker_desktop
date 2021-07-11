@@ -27,6 +27,7 @@ SOFTWARE.
 
 import 'dart:io';
 
+import 'file_picker_linux.dart';
 import 'file_picker_result.dart';
 import 'file_type.dart';
 
@@ -41,6 +42,9 @@ import 'file_type.dart';
 Future<String?> getDirectoryPath({
   String dialogTitle = 'Please select a directory:',
 }) {
+  if (Platform.isLinux) {
+    return FilePickerLinux().getDirectoryPath(dialogTitle: dialogTitle);
+  }
   throw UnimplementedError(
     'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
   );
@@ -74,6 +78,16 @@ Future<FilePickerResult?> pickFiles({
   bool withData = false,
   bool withReadStream = false,
 }) {
+  if (Platform.isLinux) {
+    return FilePickerLinux().pickFiles(
+      dialogTitle: dialogTitle,
+      type: type,
+      allowedExtensions: allowedExtensions,
+      allowMultiple: allowMultiple,
+      withData: withData,
+      withReadStream: withReadStream,
+    );
+  }
   throw UnimplementedError(
     'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
   );
