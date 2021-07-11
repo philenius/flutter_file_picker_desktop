@@ -1,25 +1,23 @@
-import 'dart:io';
+@TestOn('linux')
 
 import 'package:file_picker_desktop/src/file_picker_linux.dart';
 import 'package:file_picker_desktop/src/file_type.dart';
 import 'package:test/test.dart';
 
-void main() {
-  final imageTestFile = '/tmp/test.jpg';
-  final pdfTestFile = '/tmp/test.pdf';
-  final yamlTestFile = '/tmp/test.yml';
+import 'common.dart';
 
-  setUp(() {
-    new File(
-      './test/test_files/franz-michael-schneeberger-unsplash.jpg',
-    ).copySync(imageTestFile);
-    new File(
-      './test/test_files/test.pdf',
-    ).copySync(pdfTestFile);
-    new File(
-      './test/test_files/test.yml',
-    ).copySync(yamlTestFile);
-  });
+void main() {
+  final imageTestFile = '/tmp/test_linux.jpg';
+  final pdfTestFile = '/tmp/test_linux.pdf';
+  final yamlTestFile = '/tmp/test_linux.yml';
+
+  setUpAll(
+    () => setUpTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
+  );
+
+  tearDownAll(
+    () => tearDownTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
+  );
 
   group('pickFiles()', () {
     test(
@@ -129,7 +127,7 @@ void main() {
 
       expect(platformFiles.length, equals(1));
       expect(platformFiles[0].extension, equals('jpg'));
-      expect(platformFiles[0].name, equals('test.jpg'));
+      expect(platformFiles[0].name, equals('test_linux.jpg'));
       expect(platformFiles[0].path, equals(imageTestFile));
       expect(platformFiles[0].size, equals(4073378));
     });
@@ -156,17 +154,17 @@ void main() {
       expect(platformFiles.length, equals(3));
 
       expect(platformFiles[0].extension, equals('jpg'));
-      expect(platformFiles[0].name, equals('test.jpg'));
+      expect(platformFiles[0].name, equals('test_linux.jpg'));
       expect(platformFiles[0].path, equals(imageTestFile));
       expect(platformFiles[0].size, equals(4073378));
 
       expect(platformFiles[1].extension, equals('pdf'));
-      expect(platformFiles[1].name, equals('test.pdf'));
+      expect(platformFiles[1].name, equals('test_linux.pdf'));
       expect(platformFiles[1].path, equals(pdfTestFile));
       expect(platformFiles[1].size, equals(7478));
 
       expect(platformFiles[2].extension, equals('yml'));
-      expect(platformFiles[2].name, equals('test.yml'));
+      expect(platformFiles[2].name, equals('test_linux.yml'));
       expect(platformFiles[2].path, equals(yamlTestFile));
       expect(platformFiles[2].size, equals(213));
     });
@@ -183,12 +181,12 @@ void main() {
       expect(platformFiles.length, equals(2));
 
       expect(platformFiles[0].extension, equals('yml'));
-      expect(platformFiles[0].name, equals('test.yml'));
+      expect(platformFiles[0].name, equals('test_linux.yml'));
       expect(platformFiles[0].path, equals(yamlTestFile));
       expect(platformFiles[0].size, equals(213));
 
       expect(platformFiles[1].extension, equals('pdf'));
-      expect(platformFiles[1].name, equals('test.pdf'));
+      expect(platformFiles[1].name, equals('test_linux.pdf'));
       expect(platformFiles[1].path, equals(pdfTestFile));
       expect(platformFiles[1].size, equals(7478));
     });
