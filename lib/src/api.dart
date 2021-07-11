@@ -27,6 +27,9 @@ SOFTWARE.
 
 import 'dart:io';
 
+import 'package:file_picker_desktop/src/file_picker.dart';
+import 'package:file_picker_desktop/src/file_picker_windows.dart';
+
 import 'file_picker_linux.dart';
 import 'file_picker_result.dart';
 import 'file_type.dart';
@@ -42,12 +45,19 @@ import 'file_type.dart';
 Future<String?> getDirectoryPath({
   String dialogTitle = 'Please select a directory:',
 }) {
+  FilePicker? filePicker;
+
   if (Platform.isLinux) {
-    return FilePickerLinux().getDirectoryPath(dialogTitle: dialogTitle);
+    filePicker = FilePickerLinux();
+  } else if (Platform.isWindows) {
+    filePicker = FilePickerWindows();
+  } else {
+    throw UnimplementedError(
+      'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
+    );
   }
-  throw UnimplementedError(
-    'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
-  );
+
+  return filePicker.getDirectoryPath(dialogTitle: dialogTitle);
 }
 
 /// Opens a dialog to let the user select one or multiple files and retrieves the
@@ -86,18 +96,24 @@ Future<FilePickerResult?> pickFiles({
       'If you are setting the file type to "custom", then a non-empty list of allowed file extensions must be provided.',
     );
   }
+  FilePicker? filePicker;
 
   if (Platform.isLinux) {
-    return FilePickerLinux().pickFiles(
-      dialogTitle: dialogTitle,
-      type: type,
-      allowedExtensions: allowedExtensions,
-      allowMultiple: allowMultiple,
-      withData: withData,
-      withReadStream: withReadStream,
+    filePicker = FilePickerLinux();
+  } else if (Platform.isWindows) {
+    filePicker = FilePickerWindows();
+  } else {
+    throw UnimplementedError(
+      'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
     );
   }
-  throw UnimplementedError(
-    'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
+
+  return filePicker.pickFiles(
+    dialogTitle: dialogTitle,
+    type: type,
+    allowedExtensions: allowedExtensions,
+    allowMultiple: allowMultiple,
+    withData: withData,
+    withReadStream: withReadStream,
   );
 }
