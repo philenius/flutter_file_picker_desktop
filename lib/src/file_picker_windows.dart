@@ -171,8 +171,8 @@ class FilePickerWindows extends FilePicker {
         }
       } else {
         lastCharWasNull = false;
+        buffer.writeCharCode(char);
       }
-      buffer.writeCharCode(char);
       i++;
     }
 
