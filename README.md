@@ -1,5 +1,7 @@
 # file_picker_desktop
 
+[![CI Pipeline](https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml/badge.svg)](https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml)
+
 A new Flutter package project.
 
 ## Getting Started
