@@ -28,6 +28,7 @@ SOFTWARE.
 import 'dart:io';
 
 import 'package:file_picker_desktop/src/file_picker.dart';
+import 'package:file_picker_desktop/src/file_picker_macos.dart';
 import 'package:file_picker_desktop/src/file_picker_windows.dart';
 
 import 'file_picker_linux.dart';
@@ -51,6 +52,8 @@ Future<String?> getDirectoryPath({
     filePicker = FilePickerLinux();
   } else if (Platform.isWindows) {
     filePicker = FilePickerWindows();
+  } else if (Platform.isMacOS) {
+    filePicker = FilePickerMacOS();
   } else {
     throw UnimplementedError(
       'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
@@ -102,6 +105,8 @@ Future<FilePickerResult?> pickFiles({
     filePicker = FilePickerLinux();
   } else if (Platform.isWindows) {
     filePicker = FilePickerWindows();
+  } else if (Platform.isMacOS) {
+    filePicker = FilePickerMacOS();
   } else {
     throw UnimplementedError(
       'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
