@@ -1,11 +1,10 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:file_picker_desktop/src/file_picker_utils.dart';
+import 'package:file_picker_desktop/src/platform_file.dart';
 
 import 'file_picker.dart';
 import 'file_picker_result.dart';
 import 'file_type.dart';
-import 'platform_file.dart';
 
 class FilePickerLinux extends FilePicker {
   @override
@@ -17,24 +16,33 @@ class FilePickerLinux extends FilePicker {
     required bool withData,
     required bool withReadStream,
   }) async {
-    final String fileFilter = fileTypeToFileFilter(type, allowedExtensions);
-    final String pathToExecutable = await _getPathToExecutable();
-    final String? fileSelectionResult = await _openFileSelectionDialog(
-      pathToExecutable,
+    final String executable = await this._getPathToExecutable();
+    final String fileFilter = this.fileTypeToFileFilter(
+      type,
+      allowedExtensions,
+    );
+    final List<String> arguments = await this.generateCommandLineArguments(
       dialogTitle,
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
       pickDirectory: false,
     );
 
+    final String? fileSelectionResult = await runExecutableWithArguments(
+      executable,
+      arguments,
+    );
     if (fileSelectionResult == null) {
       return null;
     }
 
-    final platformFiles = await resultStringToPlatformFiles(
+    final List<String> filePaths = this.resultStringToFilePaths(
       fileSelectionResult,
-      withData,
+    );
+    final List<PlatformFile> platformFiles = await filePathsToPlatformFiles(
+      filePaths,
       withReadStream,
+      withData,
     );
 
     return FilePickerResult(platformFiles);
@@ -45,11 +53,11 @@ class FilePickerLinux extends FilePicker {
     required String dialogTitle,
   }) async {
     final executable = await this._getPathToExecutable();
-    return await _openFileSelectionDialog(
-      executable,
+    final arguments = generateCommandLineArguments(
       dialogTitle,
       pickDirectory: true,
     );
+    return await runExecutableWithArguments(executable, arguments);
   }
 
   /// Returns the path to the executables `qarma` or `zenity` as a [String].
@@ -61,21 +69,10 @@ class FilePickerLinux extends FilePicker {
   /// the path.
   Future<String> _getPathToExecutable() async {
     try {
-      return await _isExecutableOnPath('qarma');
+      return await isExecutableOnPath('qarma');
     } on Exception {
-      return await _isExecutableOnPath('zenity');
+      return await isExecutableOnPath('zenity');
     }
-  }
-
-  Future<String> _isExecutableOnPath(String executable) async {
-    final processResult = await Process.run('which', [executable]);
-    final path = processResult.stdout?.toString().trim();
-    if (processResult.exitCode != 0 || path == null || path.isEmpty) {
-      throw Exception(
-        'Couldn\'t find the executable $executable in the path.',
-      );
-    }
-    return path;
   }
 
   String fileTypeToFileFilter(FileType type, List<String>? allowedExtensions) {
@@ -87,9 +84,9 @@ class FilePickerLinux extends FilePicker {
       case FileType.custom:
         return '*.' + allowedExtensions!.join(' *.');
       case FileType.image:
-        return '*.png *.jpg *.jpeg';
+        return '*.bmp *.gif *.jpg *.jpeg *.png';
       case FileType.media:
-        return '*.png *.jpg *.jpeg *.webm *.mpeg *.mkv *.mp4 *.avi *.mov *.flv';
+        return '*.webm *.mpeg *.mkv *.mp4 *.avi *.mov *.flv *.jpg *.jpeg *.bmp *.gif *.png';
       case FileType.video:
         return '*.webm *.mpeg *.mkv *.mp4 *.avi *.mov *.flv';
       default:
@@ -97,13 +94,12 @@ class FilePickerLinux extends FilePicker {
     }
   }
 
-  Future<String?> _openFileSelectionDialog(
-    String executable,
+  List<String> generateCommandLineArguments(
     String dialogTitle, {
     String fileFilter = '',
     bool multipleFiles = false,
     bool pickDirectory = false,
-  }) async {
+  }) {
     final arguments = ['--file-selection', '--title', dialogTitle];
 
     if (fileFilter.isNotEmpty) {
@@ -118,23 +114,15 @@ class FilePickerLinux extends FilePicker {
       arguments.add('--directory');
     }
 
-    final processResult = await Process.run(executable, arguments);
-
-    final path = processResult.stdout?.toString().trim();
-    if (processResult.exitCode != 0 || path == null || path.isEmpty) {
-      return null;
-    }
-    return path;
+    return arguments;
   }
 
   /// Transforms the result string (stdout) of `qarma` / `zenity` into a [List]
-  /// of [PlatformFile]s.
-  Future<List<PlatformFile>> resultStringToPlatformFiles(
-    String fileSelectionResult,
-    bool withData,
-    bool withReadStream,
-  ) {
-    final filePaths = fileSelectionResult.split('|');
-    return filePathsToPlatformFiles(filePaths, withReadStream, withData);
+  /// of file paths.
+  List<String> resultStringToFilePaths(String fileSelectionResult) {
+    if (fileSelectionResult.trim().isEmpty) {
+      return [];
+    }
+    return fileSelectionResult.split('|');
   }
 }

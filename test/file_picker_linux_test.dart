@@ -35,13 +35,14 @@ void main() {
 
       expect(
         picker.fileTypeToFileFilter(FileType.image, null),
-        equals('*.png *.jpg *.jpeg'),
+        equals('*.bmp *.gif *.jpg *.jpeg *.png'),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.media, null),
         equals(
-            '*.png *.jpg *.jpeg *.webm *.mpeg *.mkv *.mp4 *.avi *.mov *.flv'),
+          '*.webm *.mpeg *.mkv *.mp4 *.avi *.mov *.flv *.jpg *.jpeg *.bmp *.gif *.png',
+        ),
       );
 
       expect(
@@ -67,78 +68,121 @@ void main() {
     });
   });
 
-  group('resultStringToPlatformFiles()', () {
+  group('resultStringToFilePaths()', () {
     test('should interpret the result of picking a single file', () async {
       final picker = FilePickerLinux();
-      final fileSelectionResult = imageTestFile;
 
-      final platformFiles = await picker.resultStringToPlatformFiles(
-          fileSelectionResult, false, false);
+      final filePaths = await picker.resultStringToFilePaths(imageTestFile);
 
-      expect(platformFiles.length, equals(1));
-      expect(platformFiles[0].extension, equals('jpg'));
-      expect(platformFiles[0].name, equals('test_linux.jpg'));
-      expect(platformFiles[0].path, equals(imageTestFile));
-      expect(platformFiles[0].size, equals(4073378));
+      expect(filePaths.length, equals(1));
+      expect(filePaths[0], imageTestFile);
     });
 
     test('should return an empty list if the file picker result was empty',
         () async {
       final picker = FilePickerLinux();
-      final fileSelectionResult = '';
 
-      final platformFiles = await picker.resultStringToPlatformFiles(
-          fileSelectionResult, false, false);
+      final filePaths = await picker.resultStringToFilePaths('');
 
-      expect(platformFiles.length, equals(0));
+      expect(filePaths.length, equals(0));
     });
 
     test('should interpret the result of picking multiple files', () async {
       final picker = FilePickerLinux();
-      final fileSelectionResult =
-          '${imageTestFile}|${pdfTestFile}|${yamlTestFile}';
 
-      final platformFiles = await picker.resultStringToPlatformFiles(
-          fileSelectionResult, false, false);
+      final filePaths = await picker.resultStringToFilePaths(
+        '${imageTestFile}|${pdfTestFile}|${yamlTestFile}',
+      );
 
-      expect(platformFiles.length, equals(3));
+      expect(filePaths.length, equals(3));
+      expect(filePaths[0], equals(imageTestFile));
+      expect(filePaths[1], equals(pdfTestFile));
+      expect(filePaths[2], equals(yamlTestFile));
+    });
+  });
 
-      expect(platformFiles[0].extension, equals('jpg'));
-      expect(platformFiles[0].name, equals('test_linux.jpg'));
-      expect(platformFiles[0].path, equals(imageTestFile));
-      expect(platformFiles[0].size, equals(4073378));
+  group('generateCommandLineArguments()', () {
+    test('should generate the arguments for picking a single file', () {
+      final picker = FilePickerLinux();
 
-      expect(platformFiles[1].extension, equals('pdf'));
-      expect(platformFiles[1].name, equals('test_linux.pdf'));
-      expect(platformFiles[1].path, equals(pdfTestFile));
-      expect(platformFiles[1].size, equals(7478));
+      final cliArguments = picker.generateCommandLineArguments(
+        'Select a file:',
+        multipleFiles: false,
+        pickDirectory: false,
+      );
 
-      expect(platformFiles[2].extension, equals('yml'));
-      expect(platformFiles[2].name, equals('test_linux.yml'));
-      expect(platformFiles[2].path, equals(yamlTestFile));
-      expect(platformFiles[2].size, equals(213));
+      expect(
+        cliArguments.join(' '),
+        equals("""--file-selection --title Select a file:"""),
+      );
+    });
+
+    test('should generate the arguments for picking multiple files', () {
+      final picker = FilePickerLinux();
+
+      final cliArguments = picker.generateCommandLineArguments(
+        'Select files:',
+        multipleFiles: true,
+        pickDirectory: false,
+      );
+
+      expect(
+        cliArguments.join(' '),
+        equals("""--file-selection --title Select files: --multiple"""),
+      );
     });
 
     test(
-        'should correctly interpret the result even if it ends with an additional pipe',
-        () async {
+        'should generate the arguments for picking a single file with a custom file filter',
+        () {
       final picker = FilePickerLinux();
-      final fileSelectionResult = '${yamlTestFile}|${pdfTestFile}|';
 
-      final platformFiles = await picker.resultStringToPlatformFiles(
-          fileSelectionResult, false, false);
+      final cliArguments = picker.generateCommandLineArguments(
+        'Select a file:',
+        fileFilter: '*.dart *.yml',
+        multipleFiles: false,
+        pickDirectory: false,
+      );
 
-      expect(platformFiles.length, equals(2));
+      expect(
+        cliArguments.join(' '),
+        equals(
+          """--file-selection --title Select a file: --file-filter=*.dart *.yml""",
+        ),
+      );
+    });
 
-      expect(platformFiles[0].extension, equals('yml'));
-      expect(platformFiles[0].name, equals('test_linux.yml'));
-      expect(platformFiles[0].path, equals(yamlTestFile));
-      expect(platformFiles[0].size, equals(213));
+    test(
+        'should generate the arguments for picking multiple files with a custom file filter',
+        () {
+      final picker = FilePickerLinux();
 
-      expect(platformFiles[1].extension, equals('pdf'));
-      expect(platformFiles[1].name, equals('test_linux.pdf'));
-      expect(platformFiles[1].path, equals(pdfTestFile));
-      expect(platformFiles[1].size, equals(7478));
+      final cliArguments = picker.generateCommandLineArguments(
+        'Select HTML files:',
+        fileFilter: '*.html',
+        multipleFiles: true,
+        pickDirectory: false,
+      );
+
+      expect(
+        cliArguments.join(' '),
+        equals(
+            """--file-selection --title Select HTML files: --file-filter=*.html --multiple"""),
+      );
+    });
+
+    test('should generate the arguments for picking a directory', () {
+      final picker = FilePickerLinux();
+
+      final cliArguments = picker.generateCommandLineArguments(
+        'Select a directory:',
+        pickDirectory: true,
+      );
+
+      expect(
+        cliArguments.join(' '),
+        equals("""--file-selection --title Select a directory: --directory"""),
+      );
     });
   });
 }

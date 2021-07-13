@@ -57,8 +57,11 @@ void main() {
         () async {
       final filePaths = <String>[];
 
-      final platformFiles =
-          await filePathsToPlatformFiles(filePaths, false, false);
+      final platformFiles = await filePathsToPlatformFiles(
+        filePaths,
+        false,
+        false,
+      );
 
       expect(platformFiles.length, equals(filePaths.length));
     });
