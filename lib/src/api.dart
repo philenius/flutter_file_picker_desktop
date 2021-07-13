@@ -67,7 +67,7 @@ Future<String?> getDirectoryPath({
 /// can be used to specify instructions to the user.
 ///
 /// Default [type] set to [FileType.any] with [allowMultiple] set to [false]
-/// Optionally, [allowedExtensions] might be provided (e.g. `[pdf, svg, jpg]`.).
+/// Optionally, [allowedExtensions] might be provided (e.g. `['pdf', 'svg', 'jpg']`).
 ///
 /// If [withData] is set, picked files will have its byte data immediately available on memory as `Uint8List`
 /// which can be useful if you are picking it for server upload or similar. However, have in mind that
