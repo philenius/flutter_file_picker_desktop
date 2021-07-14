@@ -2,18 +2,121 @@
 
 [![CI Pipeline](https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml/badge.svg)](https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml)
 
-This repository contains a Dart package that allows you to use a native file explorer on Windows, macOS, and Linux. The package offers a simple API:
+This repository contains a Dart package that allows you to use a native file explorer on Windows, macOS, and Linux for picking files and directories.
 
-* Pick a single file or multiple files with support for filtering the allowed file extensions
-* Pick a directory
+
+
+## Features
+
+* :tada: This package **does not require** [Go Flutter](https://github.com/go-flutter-desktop/go-flutter). This package is written entirely in Dart!!! No dependencies on Go or Go Flutter.
+* :floppy_disk: Simple API for picking a single file or multiple files with support for filtering the allowed file extensions.
+* :file_folder: Simple API for picking a directory.
+* :wrench: Different filtering options for file types included (+ customizable).
+* :tada: Customizable title of the file picker dialog.
+* :robot: Runs on Linux, macOS, and Windows.
+
+
+
+**:warning: This package does not support Android, iOS, or the web. Please refer to Miguel Pruivo's package [github.com/miguelpruivo/flutter_file_picker](https://github.com/miguelpruivo/flutter_file_picker/) which offers the same functionality for Android, iOS, and the web. I tried my best to provide the same API as Miguel's package.**
+
+
+
+The following screenshots show the file picker dialog on Linux, macOS, and Windows:
 
 
 | Linux                                                        |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-|                                                              |                                                              |
-| **Windows**                                                  |                                                              |
-| ![Windows File Picker](screenshots/screenshotWindowsPickFiles.png) | ![Windows File Picker](screenshots/screenshotWindowsPickDirectory.png) |
+| ![Select file on Linux](screenshots/screenshotLinuxPickFiles.png) | ![Select directory on Linux](screenshots/screenshotLinuxPickDirectory.png) |
 | **macOS**                                                    |                                                              |
+| ![Select file on macOS](screenshots/screenshotMacOSFile.png) | ![Select directory on macOS](screenshots/screenshotMacOSDirectory.png) |
+| **Windows**                                                  |                                                              |
+| ![Select file on Windows](screenshots/screenshotWindowsPickFiles.png) | ![Select directory on Windows](screenshots/screenshotWindowsPickDirectory.png) |
+
+
+
+## Usage
+
+### Add to package to `pubspec.yaml`:
+
+```yaml
+...
+
+dependencies:
+  file_picker_desktop: ^1.0.0
+
+```
+
+### Import:
+
+```dart
+import 'package:file_picker_desktop/file_picker_desktop.dart';
+```
+
+### Single File:
+
+```dart
+try {
+  final result = await pickFiles(
+    allowMultiple: false,
+  );
+  if (result != null) {
+    File file = File(result.files.single.path);
+  } else {
+    // User canceled the picker
+  }
+} catch (e) {
+  print(e);
+}
+```
+
+### Multiple files:
+
+```dart
+try {
+  final result = await pickFiles(
+    allowMultiple: true,
+  );
+  if (result != null) {
+    List<File> files = result.paths
+        .where((path) => path != null)
+        .map((path) => File(path!))
+        .toList();
+  } else {
+    // User canceled the picker
+  }
+} catch (e) {
+  print(e);
+}
+```
+
+### Multiple files with extension filter:
+
+```dart
+final result = await pickFiles(
+  allowMultiple: true,
+  type: FileType.custom,
+  allowedExtensions: ['jpg', 'pdf', 'doc'],
+);
+```
+
+### Load result and file details:
+
+```dart
+FilePickerResult? result = await pickFiles();
+
+if (result != null) {
+  PlatformFile file = result.files.first;
+
+  print(file.name);
+  print(file.bytes);
+  print(file.size);
+  print(file.extension);
+  print(file.path);
+} else {
+  // User canceled the picker
+}
+```
+
 
 
 ## Example Flutter App
