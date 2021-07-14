@@ -33,8 +33,7 @@ class FilePickerWindows extends FilePicker {
         fileTypeToFileFilter(type, allowedExtensions).toNativeUtf16();
     openFileName.ref.nMaxFile = maxPath;
     openFileName.ref.lpstrInitialDir = ''.toNativeUtf16();
-    openFileName.ref.flags =
-        ofnExplorer | ofnFileMustExist | ofnHideReadOnly;
+    openFileName.ref.flags = ofnExplorer | ofnFileMustExist | ofnHideReadOnly;
     if (allowMultiple) {
       openFileName.ref.flags |= ofnAllowMultiSelect;
     }
