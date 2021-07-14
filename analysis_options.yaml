@@ -1,0 +1,14 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - example/**
+  language:
+    strict-raw-types: true
+  strong-mode:
+    implicit-casts: false
+
+linter:
+  rules:
+    - cancel_subscriptions
