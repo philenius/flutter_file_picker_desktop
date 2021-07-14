@@ -1,16 +1,36 @@
-# file_picker_desktop
+# File Picker Desktop
 
 [![CI Pipeline](https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml/badge.svg)](https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml)
 
-A new Flutter package project.
+This repository contains a Dart package that allows you to use a native file explorer on Windows, macOS, and Linux. The package offers a simple API:
 
-## Getting Started
+* Pick a single file or multiple files with support for filtering the allowed file extensions
+* Pick a directory
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+| Linux                                                        |                                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              |                                                              |
+| **Windows**                                                  |                                                              |
+| ![Windows File Picker](screenshots/screenshotWindowsPickFiles.png) | ![Windows File Picker](screenshots/screenshotWindowsPickDirectory.png) |
+| **macOS**                                                    |                                                              |
+
+
+## Example Flutter App
+
+![Demo Flutter App](screenshots/screenshotDemoApp.png)
+
+The directory `./example/` contains an example Flutter app which showcases the file picker's functionality. You can run this example app the following way:
+
+```bash
+cd ./example/
+
+flutter create .
+
+# Choose the appropriate option depending on your OS
+flutter config --enable-linux-desktop
+flutter config --enable-macos-desktop
+flutter config --enable-windows-desktop
+
+flutter run
+```
