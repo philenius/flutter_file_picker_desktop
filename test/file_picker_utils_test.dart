@@ -1,4 +1,4 @@
-@TestOn('linux')
+@TestOn('linux || mac-os')
 
 import 'package:file_picker_desktop/src/file_picker_utils.dart';
 import 'package:test/test.dart';
