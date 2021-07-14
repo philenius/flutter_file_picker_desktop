@@ -35,14 +35,18 @@ import 'file_picker_linux.dart';
 import 'file_picker_result.dart';
 import 'file_type.dart';
 
-/// Opens a dialog to let the user select a directory and returns its absolute path.
+/// Opens a dialog to let the user select a directory and returns its absolute
+/// path.
 ///
-/// [dialogTitle] is displayed at the top of the file selection dialog. This string
-/// can be used to specify instructions to the user.
+/// [dialogTitle] is displayed at the top of the file selection dialog. This
+/// string can be used to specify instructions to the user.
 ///
-/// Returns a [Future<String>] which resolves to the absolute path of the directory,
-/// if the user selected a directory. Returns [null] if folder path couldn't be resolved
-/// or the user closed the dialog without making a selection.
+/// Returns a [Future<String>] which resolves to the absolute path of the
+/// directory, if the user selected a directory. Returns [null] if aborted.
+///
+/// Throws [UnimplementedError] for unsupported platforms. May throw an
+/// [Exception] if the executable for opening the directory picker dialog could
+/// not be found or the result of the dialog couldn't be interpreted.
 Future<String?> getDirectoryPath({
   String dialogTitle = 'Please select a directory:',
 }) {
@@ -63,26 +67,34 @@ Future<String?> getDirectoryPath({
   return filePicker.getDirectoryPath(dialogTitle: dialogTitle);
 }
 
-/// Opens a dialog to let the user select one or multiple files and retrieves the
-/// file(s) from the underlying platform.
+/// Opens a dialog to let the user select one or multiple files and retrieves
+/// the file(s) from the underlying platform.
 ///
-/// [dialogTitle] is displayed at the top of the file selection dialog. This string
-/// can be used to specify instructions to the user.
+/// [dialogTitle] is displayed at the top of the file selection dialog. This
+/// string can be used to specify instructions to the user.
 ///
 /// Default [type] set to [FileType.any] with [allowMultiple] set to [false]
-/// Optionally, [allowedExtensions] might be provided (e.g. `['pdf', 'svg', 'jpg']`).
+/// Optionally, [allowedExtensions] might be provided as a list of strings which
+/// represent the allowed file extension (e.g. `['pdf', 'svg', 'jpg']`).
 ///
-/// If [withData] is set, picked files will have its byte data immediately available on memory as `Uint8List`
-/// which can be useful if you are picking it for server upload or similar. However, have in mind that
-/// enabling this may result in out of memory issues if you pick multiple huge files. Use [withReadStream]
-/// instead. Defaults to `false`.
+/// If [withData] is set, picked files will have its byte data immediately
+/// available on memory as `Uint8List` which can be useful if you are picking it
+/// for server upload or similar. However, have in mind that enabling this may
+/// result in out of memory issues if you pick multiple huge files. Use
+/// [withReadStream] instead. Defaults to `false`.
 ///
-/// If [withReadStream] is set, picked files will have its byte data available as a [Stream<List<int>>]
-/// which can be useful for uploading and processing large files. Defaults to `false`.
+/// If [withReadStream] is set, picked files will have its byte data available
+/// as a [Stream<List<int>>] which can be useful for uploading and processing
+/// large files. Defaults to `false`.
 ///
 /// The result is wrapped in a [FilePickerResult] which contains helper getters
 /// with useful information regarding the picked [List<PlatformFile>].
 /// Returns [null] if aborted.
+///
+/// Throws [UnimplementedError] on unsupported platforms. Throws [ArgumentError]
+/// if the given combination of arguments is invalid. May throw an [Exception]
+/// if the executable for opening the file picker dialog could not be found or
+/// the result of the dialog couldn't be interpreted.
 Future<FilePickerResult?> pickFiles({
   String dialogTitle = 'Please select file(s):',
   FileType type = FileType.any,
