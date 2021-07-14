@@ -16,11 +16,11 @@ class FilePickerMacOS extends FilePicker {
     required bool withReadStream,
   }) async {
     final String executable = await isExecutableOnPath('osascript');
-    final String fileFilter = this.fileTypeToFileFilter(
+    final String fileFilter = fileTypeToFileFilter(
       type,
       allowedExtensions,
     );
-    final List<String> arguments = this.generateCommandLineArguments(
+    final List<String> arguments = generateCommandLineArguments(
       dialogTitle,
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
@@ -35,7 +35,7 @@ class FilePickerMacOS extends FilePicker {
       return null;
     }
 
-    final List<String> filePaths = this.resultStringToFilePaths(
+    final List<String> filePaths = resultStringToFilePaths(
       fileSelectionResult,
     );
     final List<PlatformFile> platformFiles = await filePathsToPlatformFiles(
@@ -52,7 +52,7 @@ class FilePickerMacOS extends FilePicker {
     required String dialogTitle,
   }) async {
     final String executable = await isExecutableOnPath('osascript');
-    final List<String> arguments = this.generateCommandLineArguments(
+    final List<String> arguments = generateCommandLineArguments(
       dialogTitle,
       pickDirectory: true,
     );
@@ -65,7 +65,7 @@ class FilePickerMacOS extends FilePicker {
       return null;
     }
 
-    return this.resultStringToFilePaths(directorySelectionResult).first;
+    return resultStringToFilePaths(directorySelectionResult).first;
   }
 
   String fileTypeToFileFilter(FileType type, List<String>? allowedExtensions) {

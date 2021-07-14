@@ -28,15 +28,15 @@ class FilePickerWindows extends FilePicker {
     final Pointer<OPENFILENAMEW> openFileName = calloc<OPENFILENAMEW>();
     openFileName.ref.lStructSize = sizeOf<OPENFILENAMEW>();
     openFileName.ref.lpstrTitle = dialogTitle.toNativeUtf16();
-    openFileName.ref.lpstrFile = calloc.allocate<Utf16>(MAX_PATH);
+    openFileName.ref.lpstrFile = calloc.allocate<Utf16>(maxPath);
     openFileName.ref.lpstrFilter =
         fileTypeToFileFilter(type, allowedExtensions).toNativeUtf16();
-    openFileName.ref.nMaxFile = MAX_PATH;
+    openFileName.ref.nMaxFile = maxPath;
     openFileName.ref.lpstrInitialDir = ''.toNativeUtf16();
     openFileName.ref.flags =
-        OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+        ofnExplorer | ofnFileMustExist | ofnHideReadOnly;
     if (allowMultiple) {
-      openFileName.ref.flags |= OFN_ALLOWMULTISELECT;
+      openFileName.ref.flags |= ofnAllowMultiSelect;
     }
 
     final result = getOpenFileNameW(openFileName);
@@ -97,10 +97,10 @@ class FilePickerWindows extends FilePicker {
     final Pointer<BROWSEINFOA> browseInfo = calloc<BROWSEINFOA>();
     browseInfo.ref.hwndOwner = nullptr;
     browseInfo.ref.pidlRoot = nullptr;
-    browseInfo.ref.pszDisplayName = calloc.allocate<Utf16>(MAX_PATH);
+    browseInfo.ref.pszDisplayName = calloc.allocate<Utf16>(maxPath);
     browseInfo.ref.lpszTitle = dialogTitle.toNativeUtf16();
     browseInfo.ref.ulFlags =
-        BIF_EDITBOX | BIF_NEWDIALOGSTYLE | BIF_RETURNONLYFSDIRS;
+        bifEditBox | bifNewDialogStyle | bifReturnOnlyFsDirs;
 
     final Pointer<NativeType> itemIdentifierList =
         shBrowseForFolderW(browseInfo);
@@ -128,7 +128,7 @@ class FilePickerWindows extends FilePicker {
         shell32.lookupFunction<SHGetPathFromIDListW, SHGetPathFromIDListWDart>(
             'SHGetPathFromIDListW');
 
-    final Pointer<Utf16> pszPath = calloc.allocate<Utf16>(MAX_PATH);
+    final Pointer<Utf16> pszPath = calloc.allocate<Utf16>(maxPath);
 
     final int result = shGetPathFromIDListW(lpItem, pszPath);
     if (result == 0x00000000) {

@@ -38,7 +38,7 @@ typedef SHGetPathFromIDListW = Int8 Function(
   /// the root of the namespace (the desktop).
   Pointer pidl,
 
-  /// The address of a buffer to receive the file system path. This buffer must be at least [MAX_PATH]
+  /// The address of a buffer to receive the file system path. This buffer must be at least [maxPath]
   /// characters in size.
   Pointer<Utf16> pszPath,
 );
@@ -64,7 +64,7 @@ class BROWSEINFOA extends Struct {
   external Pointer pidlRoot;
 
   /// Pointer to a buffer to receive the display name of the folder selected by the user. The size
-  /// of this buffer is assumed to be [MAX_PATH] characters.
+  /// of this buffer is assumed to be [maxPath] characters.
   external Pointer<Utf16> pszDisplayName;
 
   /// Pointer to a null-terminated string that is displayed above the tree view control in the dialog
@@ -178,27 +178,27 @@ class OPENFILENAMEW extends Struct {
 
 /// Only return file system directories. If the user selects folders that are not part of the file
 /// system, the OK button is grayed.
-const BIF_RETURNONLYFSDIRS = 0x00000001;
+const bifReturnOnlyFsDirs = 0x00000001;
 
 /// Include an edit control in the browse dialog box that allows the user to type the name of an item.
-const BIF_EDITBOX = 0x00000010;
+const bifEditBox = 0x00000010;
 
 /// Use the new user interface. Setting this flag provides the user with a larger dialog box that can
 /// be resized. The dialog box has several new capabilities, including: drag-and-drop capability within
 /// the dialog box, reordering, shortcut menus, new folders, delete, and other shortcut menu commands.
-const BIF_NEWDIALOGSTYLE = 0x00000040;
+const bifNewDialogStyle = 0x00000040;
 
 /// In the Windows API, the maximum length for a path is MAX_PATH, which is defined as 260 characters.
-const MAX_PATH = 260;
+const maxPath = 260;
 
 /// The File Name list box allows multiple selections.
-const OFN_ALLOWMULTISELECT = 0x00000200;
+const ofnAllowMultiSelect = 0x00000200;
 
 /// Indicates that any customizations made to the Open or Save As dialog box use the Explorer-style customization methods.
-const OFN_EXPLORER = 0x00080000;
+const ofnExplorer = 0x00080000;
 
 /// The user can type only names of existing files in the File Name entry field.
-const OFN_FILEMUSTEXIST = 0x00001000;
+const ofnFileMustExist = 0x00001000;
 
 /// Hides the Read Only check box.
-const OFN_HIDEREADONLY = 0x00000004;
+const ofnHideReadOnly = 0x00000004;

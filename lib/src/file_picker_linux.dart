@@ -16,12 +16,12 @@ class FilePickerLinux extends FilePicker {
     required bool withData,
     required bool withReadStream,
   }) async {
-    final String executable = await this._getPathToExecutable();
-    final String fileFilter = this.fileTypeToFileFilter(
+    final String executable = await _getPathToExecutable();
+    final String fileFilter = fileTypeToFileFilter(
       type,
       allowedExtensions,
     );
-    final List<String> arguments = await this.generateCommandLineArguments(
+    final List<String> arguments = generateCommandLineArguments(
       dialogTitle,
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
@@ -36,7 +36,7 @@ class FilePickerLinux extends FilePicker {
       return null;
     }
 
-    final List<String> filePaths = this.resultStringToFilePaths(
+    final List<String> filePaths = resultStringToFilePaths(
       fileSelectionResult,
     );
     final List<PlatformFile> platformFiles = await filePathsToPlatformFiles(
@@ -52,7 +52,7 @@ class FilePickerLinux extends FilePicker {
   Future<String?> getDirectoryPath({
     required String dialogTitle,
   }) async {
-    final executable = await this._getPathToExecutable();
+    final executable = await _getPathToExecutable();
     final arguments = generateCommandLineArguments(
       dialogTitle,
       pickDirectory: true,

@@ -72,7 +72,7 @@ void main() {
     test('should interpret the result of picking a single file', () async {
       final picker = FilePickerLinux();
 
-      final filePaths = await picker.resultStringToFilePaths(imageTestFile);
+      final filePaths = picker.resultStringToFilePaths(imageTestFile);
 
       expect(filePaths.length, equals(1));
       expect(filePaths[0], imageTestFile);
@@ -82,7 +82,7 @@ void main() {
         () async {
       final picker = FilePickerLinux();
 
-      final filePaths = await picker.resultStringToFilePaths('');
+      final filePaths = picker.resultStringToFilePaths('');
 
       expect(filePaths.length, equals(0));
     });
@@ -90,8 +90,8 @@ void main() {
     test('should interpret the result of picking multiple files', () async {
       final picker = FilePickerLinux();
 
-      final filePaths = await picker.resultStringToFilePaths(
-        '${imageTestFile}|${pdfTestFile}|${yamlTestFile}',
+      final filePaths = picker.resultStringToFilePaths(
+        '$imageTestFile|$pdfTestFile|$yamlTestFile',
       );
 
       expect(filePaths.length, equals(3));
