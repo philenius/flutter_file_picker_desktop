@@ -16,24 +16,24 @@ void main() {
 
       expect(
         picker.fileTypeToFileFilter(FileType.audio, null),
-        equals('"mp3", "wav", "midi", "ogg", "aac"'),
+        equals('"", "mp3", "wav", "midi", "ogg", "aac"'),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.image, null),
-        equals('"jpg", "jpeg", "bmp", "gif", "png"'),
+        equals('"", "jpg", "jpeg", "bmp", "gif", "png"'),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.media, null),
         equals(
-          '"webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv", "jpg", "jpeg", "bmp", "gif", "png"',
+          '"", "webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv", "jpg", "jpeg", "bmp", "gif", "png"',
         ),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.video, null),
-        equals('"webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv"'),
+        equals('"", "webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv"'),
       );
     });
 
@@ -44,12 +44,12 @@ void main() {
 
       expect(
         picker.fileTypeToFileFilter(FileType.custom, ['dart']),
-        equals('"dart"'),
+        equals('"", "dart"'),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.custom, ['dart', 'html']),
-        equals('"dart", "html"'),
+        equals('"", "dart", "html"'),
       );
     });
   });
