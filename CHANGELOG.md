@@ -1,3 +1,7 @@
+## 1.0.1
+
+* Fix README: forgot to update version in README after leasing v1.0.0
+
 ## 1.0.0
 
 * Fig bug in macOS implementation: the argument string for osascript was wrapped twice in quotes so that osascript didn't interpret the arguments and completed immediately
