@@ -42,7 +42,7 @@ The following screenshots show the file picker dialog on Linux, macOS, and Windo
 ...
 
 dependencies:
-  file_picker_desktop: ^1.0.0-dev.1
+  file_picker_desktop: ^1.0.1
 
 ```
 
