@@ -1,7 +1,6 @@
 # File Picker Desktop
 
-[![CI Pipeline](https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml/badge.svg)](https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml)
-![Pub Version (including pre-releases)](https://img.shields.io/pub/v/file_picker_desktop?include_prereleases)
+<a href="https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml"><img alt="CI Pipeline" src="https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml/badge.svg"></a> <a href="https://pub.dev/packages/file_picker_desktop"><img src="https://img.shields.io/pub/v/file_picker_desktop"></a> <a href="https://github.com/philenius/flutter_file_picker_desktop/issues"><img src="https://img.shields.io/github/issues/philenius/flutter_file_picker_desktop"></a> <img src="https://img.shields.io/github/license/philenius/flutter_file_picker_desktop">
 
 This repository contains a Dart package that allows you to use a native file explorer on Windows, macOS, and Linux for picking files and directories.
 

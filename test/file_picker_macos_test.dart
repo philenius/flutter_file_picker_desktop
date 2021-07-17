@@ -16,24 +16,24 @@ void main() {
 
       expect(
         picker.fileTypeToFileFilter(FileType.audio, null),
-        equals('"mp3", "wav", "midi", "ogg", "aac"'),
+        equals('"", "mp3", "wav", "midi", "ogg", "aac"'),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.image, null),
-        equals('"jpg", "jpeg", "bmp", "gif", "png"'),
+        equals('"", "jpg", "jpeg", "bmp", "gif", "png"'),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.media, null),
         equals(
-          '"webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv", "jpg", "jpeg", "bmp", "gif", "png"',
+          '"", "webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv", "jpg", "jpeg", "bmp", "gif", "png"',
         ),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.video, null),
-        equals('"webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv"'),
+        equals('"", "webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv"'),
       );
     });
 
@@ -44,13 +44,55 @@ void main() {
 
       expect(
         picker.fileTypeToFileFilter(FileType.custom, ['dart']),
-        equals('"dart"'),
+        equals('"", "dart"'),
       );
 
       expect(
         picker.fileTypeToFileFilter(FileType.custom, ['dart', 'html']),
-        equals('"dart", "html"'),
+        equals('"", "dart", "html"'),
       );
+    });
+  });
+
+  group('escapeDialogTitle()', () {
+    test('should escape backslashes in the title of the dialog', () {
+      final picker = FilePickerMacOS();
+
+      final escapedTitle = picker.escapeDialogTitle(
+        'Please select files that contain a \\:',
+      );
+
+      expect(
+        escapedTitle,
+        equals(
+          'Please select files that contain a \\\\:',
+        ),
+      );
+    });
+
+    test('should escape line breaks in the title of the dialog', () {
+      final picker = FilePickerMacOS();
+
+      final escapedTitle = picker.escapeDialogTitle(
+        'Please continue reading\nafter the line break:',
+      );
+
+      expect(
+        escapedTitle,
+        equals(
+          'Please continue reading\\\nafter the line break:',
+        ),
+      );
+    });
+
+    test('should escape double quotes in the title of the dialog', () {
+      final picker = FilePickerMacOS();
+
+      final escapedTitle = picker.escapeDialogTitle(
+        'Please select a "quoted" file:',
+      );
+
+      expect(escapedTitle, equals('Please select a \\"quoted\\" file:'));
     });
   });
 
@@ -110,7 +152,7 @@ void main() {
 
       expect(
         cliArguments.join(' '),
-        equals("""-e 'choose file of type {} with prompt "Select a file:"'"""),
+        equals('-e choose file of type {} with prompt "Select a file:"'),
       );
     });
 
@@ -126,7 +168,8 @@ void main() {
       expect(
         cliArguments.join(' '),
         equals(
-            """-e 'choose file of type {} with multiple selections allowed with prompt "Select files:"'"""),
+          '-e choose file of type {} with multiple selections allowed with prompt "Select files:"',
+        ),
       );
     });
 
@@ -145,7 +188,7 @@ void main() {
       expect(
         cliArguments.join(' '),
         equals(
-            """-e 'choose file of type {"dart", "yml"} with prompt "Select a file:"'"""),
+            '-e choose file of type {"dart", "yml"} with prompt "Select a file:"'),
       );
     });
 
@@ -164,7 +207,8 @@ void main() {
       expect(
         cliArguments.join(' '),
         equals(
-            """-e 'choose file of type {"html"} with multiple selections allowed with prompt "Select HTML files:"'"""),
+          '-e choose file of type {"html"} with multiple selections allowed with prompt "Select HTML files:"',
+        ),
       );
     });
 
@@ -178,7 +222,7 @@ void main() {
 
       expect(
         cliArguments.join(' '),
-        equals("""-e 'choose folder with prompt "Select a directory:"'"""),
+        equals('-e choose folder with prompt "Select a directory:"'),
       );
     });
   });

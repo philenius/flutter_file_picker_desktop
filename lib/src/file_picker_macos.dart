@@ -21,7 +21,7 @@ class FilePickerMacOS extends FilePicker {
       allowedExtensions,
     );
     final List<String> arguments = generateCommandLineArguments(
-      dialogTitle,
+      escapeDialogTitle(dialogTitle),
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
       pickDirectory: false,
@@ -53,7 +53,7 @@ class FilePickerMacOS extends FilePicker {
   }) async {
     final String executable = await isExecutableOnPath('osascript');
     final List<String> arguments = generateCommandLineArguments(
-      dialogTitle,
+      escapeDialogTitle(dialogTitle),
       pickDirectory: true,
     );
 
@@ -73,15 +73,15 @@ class FilePickerMacOS extends FilePicker {
       case FileType.any:
         return '';
       case FileType.audio:
-        return '"mp3", "wav", "midi", "ogg", "aac"';
+        return '"", "mp3", "wav", "midi", "ogg", "aac"';
       case FileType.custom:
-        return '"' + allowedExtensions!.join('", "') + '"';
+        return '"", "' + allowedExtensions!.join('", "') + '"';
       case FileType.image:
-        return '"jpg", "jpeg", "bmp", "gif", "png"';
+        return '"", "jpg", "jpeg", "bmp", "gif", "png"';
       case FileType.media:
-        return '"webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv", "jpg", "jpeg", "bmp", "gif", "png"';
+        return '"", "webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv", "jpg", "jpeg", "bmp", "gif", "png"';
       case FileType.video:
-        return '"webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv"';
+        return '"", "webm", "mpeg", "mkv", "mp4", "avi", "mov", "flv"';
       default:
         throw Exception('unknown file type');
     }
@@ -95,20 +95,27 @@ class FilePickerMacOS extends FilePicker {
   }) {
     final arguments = ['-e'];
 
+    String argument = 'choose ';
     if (pickDirectory) {
-      arguments.add('\'choose folder');
+      argument += 'folder ';
     } else {
-      arguments.add('\'choose file of type {$fileFilter}');
+      argument += 'file of type {$fileFilter} ';
 
       if (multipleFiles) {
-        arguments.add('with multiple selections allowed');
+        argument += 'with multiple selections allowed ';
       }
     }
 
-    arguments.add('with prompt "$dialogTitle"\'');
+    argument += 'with prompt "$dialogTitle"';
+    arguments.add(argument);
 
     return arguments;
   }
+
+  String escapeDialogTitle(String dialogTitle) => dialogTitle
+      .replaceAll('\\', '\\\\')
+      .replaceAll('"', '\\"')
+      .replaceAll('\n', '\\\n');
 
   /// Transforms the result string (stdout) of `osascript` into a [List] of
   /// file paths.
