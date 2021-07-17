@@ -54,6 +54,48 @@ void main() {
     });
   });
 
+  group('escapeDialogTitle()', () {
+    test('should escape backslashes in the title of the dialog', () {
+      final picker = FilePickerMacOS();
+
+      final escapedTitle = picker.escapeDialogTitle(
+        'Please select files that contain a \\:',
+      );
+
+      expect(
+        escapedTitle,
+        equals(
+          'Please select files that contain a \\\\:',
+        ),
+      );
+    });
+
+    test('should escape line breaks in the title of the dialog', () {
+      final picker = FilePickerMacOS();
+
+      final escapedTitle = picker.escapeDialogTitle(
+        'Please continue reading\nafter the line break:',
+      );
+
+      expect(
+        escapedTitle,
+        equals(
+          'Please continue reading\\\nafter the line break:',
+        ),
+      );
+    });
+
+    test('should escape double quotes in the title of the dialog', () {
+      final picker = FilePickerMacOS();
+
+      final escapedTitle = picker.escapeDialogTitle(
+        'Please select a "quoted" file:',
+      );
+
+      expect(escapedTitle, equals('Please select a \\"quoted\\" file:'));
+    });
+  });
+
   group('resultStringToFilePaths()', () {
     test('should interpret the result of picking no files', () {
       final picker = FilePickerMacOS();

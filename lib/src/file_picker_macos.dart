@@ -21,7 +21,7 @@ class FilePickerMacOS extends FilePicker {
       allowedExtensions,
     );
     final List<String> arguments = generateCommandLineArguments(
-      dialogTitle,
+      escapeDialogTitle(dialogTitle),
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
       pickDirectory: false,
@@ -53,7 +53,7 @@ class FilePickerMacOS extends FilePicker {
   }) async {
     final String executable = await isExecutableOnPath('osascript');
     final List<String> arguments = generateCommandLineArguments(
-      dialogTitle,
+      escapeDialogTitle(dialogTitle),
       pickDirectory: true,
     );
 
@@ -111,6 +111,11 @@ class FilePickerMacOS extends FilePicker {
 
     return arguments;
   }
+
+  String escapeDialogTitle(String dialogTitle) => dialogTitle
+      .replaceAll('\\', '\\\\')
+      .replaceAll('"', '\\"')
+      .replaceAll('\n', '\\\n');
 
   /// Transforms the result string (stdout) of `osascript` into a [List] of
   /// file paths.
