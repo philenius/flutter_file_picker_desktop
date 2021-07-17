@@ -95,17 +95,19 @@ class FilePickerMacOS extends FilePicker {
   }) {
     final arguments = ['-e'];
 
+    String argument = 'choose ';
     if (pickDirectory) {
-      arguments.add('\'choose folder');
+      argument += 'folder ';
     } else {
-      arguments.add('\'choose file of type {$fileFilter}');
+      argument += 'file of type {$fileFilter} ';
 
       if (multipleFiles) {
-        arguments.add('with multiple selections allowed');
+        argument += 'with multiple selections allowed ';
       }
     }
 
-    arguments.add('with prompt "$dialogTitle"\'');
+    argument += 'with prompt "$dialogTitle"';
+    arguments.add(argument);
 
     return arguments;
   }
