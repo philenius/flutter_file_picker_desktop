@@ -1,6 +1,6 @@
 name: file_picker_desktop
 description: A package that allows you to use a native file explorer on Windows, macOS, and Linux to pick a directory or one or multiple files, with extension filtering support.
-version: 1.0.0
+version: 1.0.1
 
 repository: https://github.com/philenius/flutter_file_picker_desktop
 issue_tracker: https://github.com/philenius/flutter_file_picker_desktop/issues
