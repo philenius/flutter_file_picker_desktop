@@ -99,6 +99,17 @@ void main() {
       expect(filePaths[1], equals(pdfTestFile));
       expect(filePaths[2], equals(yamlTestFile));
     });
+
+    test('should interpret the result of picking a directory', () async {
+      final picker = FilePickerLinux();
+
+      final filePaths = picker.resultStringToFilePaths(
+        '/home/john/studies',
+      );
+
+      expect(filePaths.length, equals(1));
+      expect(filePaths[0], equals('/home/john/studies'));
+    });
   });
 
   group('generateCommandLineArguments()', () {
