@@ -132,11 +132,60 @@ void main() {
       final picker = FilePickerMacOS();
 
       final filePaths = picker.resultStringToFilePaths(
-        'alias macOS:System:iOSSupport:usr:lib:swift',
+        'alias macOS:System:iOSSupport:usr:lib:swift:',
       );
 
       expect(filePaths.length, equals(1));
       expect(filePaths[0], equals('/System/iOSSupport/usr/lib/swift'));
+    });
+
+    test(
+        'should interpret the result of picking a file from an external hard drive',
+        () {
+      final picker = FilePickerMacOS();
+
+      final filePaths = picker.resultStringToFilePaths(
+        'alias Western Digital Backup:backups:2021:photos:july:image1.jpg',
+      );
+
+      expect(filePaths.length, equals(1));
+      expect(
+        filePaths[0],
+        equals(
+          '/Volumes/Western Digital Backup/backups/2021/photos/july/image1.jpg',
+        ),
+      );
+    });
+    test(
+        'should interpret the result of picking multiple files from an external hard drive',
+        () {
+      final picker = FilePickerMacOS();
+
+      final filePaths = picker.resultStringToFilePaths(
+        'alias WD Backup:photos:my screenshot.jpg, alias WD Backup:photos:christmas.png, alias WD Backup:photos:image33.png',
+      );
+
+      expect(filePaths.length, equals(3));
+      expect(
+          filePaths[0], equals('/Volumes/WD Backup/photos/my screenshot.jpg'));
+      expect(filePaths[1], equals('/Volumes/WD Backup/photos/christmas.png'));
+      expect(filePaths[2], equals('/Volumes/WD Backup/photos/image33.png'));
+    });
+
+    test(
+        'should interpret the result of picking a directory from an external hard drive',
+        () {
+      final picker = FilePickerMacOS();
+
+      final filePaths = picker.resultStringToFilePaths(
+        'alias TAILS 4.20 - 202:EFI:debian:grub:x86_64-efi:',
+      );
+
+      expect(filePaths.length, equals(1));
+      expect(
+        filePaths[0],
+        equals('/Volumes/TAILS 4.20 - 202/EFI/debian/grub/x86_64-efi'),
+      );
     });
   });
 

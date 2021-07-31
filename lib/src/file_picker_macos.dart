@@ -128,7 +128,16 @@ class FilePickerMacOS extends FilePicker {
         .split(', ')
         .map((String path) => path.trim())
         .where((String path) => path.isNotEmpty)
-        .map((String path) => '/' + path.split(':').sublist(1).join('/'))
-        .toList();
+        .map((String path) {
+      final pathElements = path.split(':').where((e) => e.isNotEmpty).toList();
+      final alias = pathElements[0];
+
+      if (alias == 'alias macOS') {
+        return '/' + pathElements.sublist(1).join('/');
+      }
+
+      final volumeName = alias.substring(6);
+      return ['/Volumes', volumeName, ...pathElements.sublist(1)].join('/');
+    }).toList();
   }
 }
