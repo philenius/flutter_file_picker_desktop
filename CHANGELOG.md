@@ -1,3 +1,8 @@
+## 1.0.2
+
+* Fix issue [#4 Cannot open file in MacOS](https://github.com/philenius/flutter_file_picker_desktop/issues/4):
+  picking files or directories on USB sticks / external hard drives caused an exception due to the missing prefix `/Volumes/` in the file path
+
 ## 1.0.1
 
 * Fix README: forgot to update version in README after leasing v1.0.0

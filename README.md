@@ -36,13 +36,13 @@ The following screenshots show the file picker dialog on Linux, macOS, and Windo
 
 ## Usage
 
-### Add to package to `pubspec.yaml`:
+### Add package to `pubspec.yaml`:
 
 ```yaml
 ...
 
 dependencies:
-  file_picker_desktop: ^1.0.1
+  file_picker_desktop: ^1.0.2
 
 ```
 
