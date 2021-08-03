@@ -113,7 +113,8 @@ void main() {
       );
 
       expect(filePaths.length, equals(1));
-      expect(filePaths[0], equals('/Users/john/Downloads/config.yml'));
+      expect(filePaths[0],
+          equals('/Volumes/macOS/Users/john/Downloads/config.yml'));
     });
 
     test('should interpret the result of picking two files', () {
@@ -124,8 +125,8 @@ void main() {
       );
 
       expect(filePaths.length, equals(2));
-      expect(filePaths[0], equals('/System/usr/lib/lib.dylib'));
-      expect(filePaths[1], equals('/System/usr/lib/libA.dylib'));
+      expect(filePaths[0], equals('/Volumes/macOS/System/usr/lib/lib.dylib'));
+      expect(filePaths[1], equals('/Volumes/macOS/System/usr/lib/libA.dylib'));
     });
 
     test('should interpret the result of picking a directory', () {
@@ -136,7 +137,8 @@ void main() {
       );
 
       expect(filePaths.length, equals(1));
-      expect(filePaths[0], equals('/System/iOSSupport/usr/lib/swift'));
+      expect(filePaths[0],
+          equals('/Volumes/macOS/System/iOSSupport/usr/lib/swift'));
     });
 
     test(
@@ -202,6 +204,26 @@ void main() {
       expect(
         cliArguments.join(' '),
         equals('-e choose file of type {} with prompt "Select a file:"'),
+      );
+    });
+
+    test(
+        'should generate the arguments for picking or entering file name to save',
+        () {
+      final picker = FilePickerMacOS();
+
+      final cliArguments = picker.generateCommandLineArguments(
+        'Save file name:',
+        multipleFiles: false,
+        pickDirectory: false,
+        saveFile: true,
+        saveFileName: 'test.out',
+      );
+
+      expect(
+        cliArguments.join(' '),
+        equals(
+            '-e choose file name default name "test.out" with prompt "Save file name:"'),
       );
     });
 

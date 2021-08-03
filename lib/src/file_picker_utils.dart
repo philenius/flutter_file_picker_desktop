@@ -34,14 +34,19 @@ Future<PlatformFile> createPlatformFile(
   File file,
   Uint8List? bytes,
   Stream<List<int>>? readStream,
-) async =>
-    PlatformFile(
-      bytes: bytes,
-      name: p.basename(file.path),
-      path: file.path,
-      readStream: readStream,
-      size: await file.length(),
-    );
+) async {
+  int? size;
+  if (file.existsSync()) {
+    size = await file.length();
+  }
+  return PlatformFile(
+    bytes: bytes,
+    name: p.basename(file.path),
+    path: file.path,
+    readStream: readStream,
+    size: size,
+  );
+}
 
 Future<String?> runExecutableWithArguments(
   String executable,

@@ -30,7 +30,7 @@ import 'dart:typed_data';
 class PlatformFile {
   const PlatformFile({
     required this.name,
-    required this.size,
+    this.size,
     this.path,
     this.bytes,
     this.readStream,
@@ -54,7 +54,7 @@ class PlatformFile {
   final Stream<List<int>>? readStream;
 
   /// The file size in bytes.
-  final int size;
+  final int? size;
 
   /// File extension for this file.
   String? get extension => name.split('.').last;

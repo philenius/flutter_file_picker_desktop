@@ -9,6 +9,8 @@ abstract class FilePicker {
     required bool allowMultiple,
     required bool withData,
     required bool withReadStream,
+    required bool saveFile,
+    String? saveFileName,
   }) async =>
       throw UnimplementedError('pickFiles() has not been implemented.');
 

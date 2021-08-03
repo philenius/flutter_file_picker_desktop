@@ -87,6 +87,10 @@ Future<String?> getDirectoryPath({
 /// as a [Stream<List<int>>] which can be useful for uploading and processing
 /// large files. Defaults to `false`.
 ///
+/// To open save file dialog (to select existing file or choose directory and
+/// input new file name) set [saveFile] to `true`. You can also specify
+/// default file name via [saveFileName].
+///
 /// The result is wrapped in a [FilePickerResult] which contains helper getters
 /// with useful information regarding the picked [List<PlatformFile>].
 /// Returns [null] if aborted.
@@ -102,6 +106,8 @@ Future<FilePickerResult?> pickFiles({
   bool allowMultiple = false,
   bool withData = false,
   bool withReadStream = false,
+  bool saveFile = false,
+  String? saveFileName,
 }) {
   if (type != FileType.custom && (allowedExtensions?.isNotEmpty ?? false)) {
     throw ArgumentError(
@@ -132,5 +138,7 @@ Future<FilePickerResult?> pickFiles({
     allowMultiple: allowMultiple,
     withData: withData,
     withReadStream: withReadStream,
+    saveFile: saveFile,
+    saveFileName: saveFileName,
   );
 }
