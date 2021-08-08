@@ -28,7 +28,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<String> _selection = [];
   bool _multipleFiles = false;
-  bool _saveFile = false;
   FileType _fileType = FileType.any;
   bool _isAllowedFileTypesInputVisible = false;
   TextEditingController _allowedFileTypesController = TextEditingController();
@@ -81,13 +80,56 @@ class _MyHomePageState extends State<MyHomePage> {
         allowedExtensions:
             this._fileType == FileType.custom ? allowedFileTypes : null,
         type: this._fileType,
-        saveFile: _saveFile,
-        saveFileName: 'test file.out',
       );
 
       if (result != null) {
         setState(() {
           this._selection = result.files.map((e) => e.path ?? 'ERROR').toList();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('User closed the dialog without selecting a file.'),
+          ),
+        );
+        setState(() {
+          this._selection = [];
+        });
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Exception: $e'),
+        ),
+      );
+      setState(() {
+        this._selection = [];
+      });
+    }
+  }
+
+  Future<void> _saveFile() async {
+    final allowedFileTypes = this
+        ._allowedFileTypesController
+        .text
+        .split(',')
+        .map((fileType) => fileType.trim())
+        .toList();
+
+    try {
+      final String? result = await saveFile(
+        allowedExtensions:
+            this._fileType == FileType.custom ? allowedFileTypes : null,
+        dialogTitle: 'Please select the output file:',
+        defaultFileName: 'default-file.txt',
+        type: this._fileType,
+      );
+
+      if (result != null) {
+        setState(() {
+          this._selection = [result];
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -134,22 +176,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   onChanged: (newValue) {
                     setState(() {
                       this._multipleFiles = newValue;
-                    });
-                  },
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text('Save file dialog:'),
-                SizedBox(
-                  width: 10,
-                ),
-                Switch(
-                  value: _saveFile,
-                  onChanged: (newValue) {
-                    setState(() {
-                      this._saveFile = newValue;
                     });
                   },
                 ),
@@ -225,6 +251,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text(
                       _multipleFiles ? 'Pick files' : 'Pick a file',
                     ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                ElevatedButton(
+                  onPressed: this._saveFile,
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text('Save a file'),
                   ),
                 ),
               ],
