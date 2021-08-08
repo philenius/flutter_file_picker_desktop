@@ -28,6 +28,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<String> _selection = [];
   bool _multipleFiles = false;
+  bool _saveFile = false;
   FileType _fileType = FileType.any;
   bool _isAllowedFileTypesInputVisible = false;
   TextEditingController _allowedFileTypesController = TextEditingController();
@@ -80,6 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
         allowedExtensions:
             this._fileType == FileType.custom ? allowedFileTypes : null,
         type: this._fileType,
+        saveFile: _saveFile,
+        saveFileName: 'test file.out',
       );
 
       if (result != null) {
@@ -131,6 +134,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   onChanged: (newValue) {
                     setState(() {
                       this._multipleFiles = newValue;
+                    });
+                  },
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text('Save file dialog:'),
+                SizedBox(
+                  width: 10,
+                ),
+                Switch(
+                  value: _saveFile,
+                  onChanged: (newValue) {
+                    setState(() {
+                      this._saveFile = newValue;
                     });
                   },
                 ),

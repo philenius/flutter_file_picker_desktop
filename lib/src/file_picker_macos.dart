@@ -14,6 +14,8 @@ class FilePickerMacOS extends FilePicker {
     required bool allowMultiple,
     required bool withData,
     required bool withReadStream,
+    required bool saveFile,
+    String? saveFileName,
   }) async {
     final String executable = await isExecutableOnPath('osascript');
     final String fileFilter = fileTypeToFileFilter(
@@ -25,6 +27,8 @@ class FilePickerMacOS extends FilePicker {
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
       pickDirectory: false,
+      saveFile: saveFile,
+      saveFileName: saveFileName,
     );
 
     final String? fileSelectionResult = await runExecutableWithArguments(
@@ -92,17 +96,30 @@ class FilePickerMacOS extends FilePicker {
     String fileFilter = '',
     bool multipleFiles = false,
     bool pickDirectory = false,
+    bool saveFile = false,
+    String? saveFileName,
   }) {
     final arguments = ['-e'];
 
     String argument = 'choose ';
+
     if (pickDirectory) {
       argument += 'folder ';
     } else {
-      argument += 'file of type {$fileFilter} ';
+      argument += 'file ';
 
-      if (multipleFiles) {
-        argument += 'with multiple selections allowed ';
+      if (saveFile) {
+        argument += 'name ';
+
+        if (saveFileName != null) {
+          argument += 'default name "$saveFileName" ';
+        }
+      } else {
+        argument += 'of type {$fileFilter} ';
+
+        if (multipleFiles) {
+          argument += 'with multiple selections allowed ';
+        }
       }
     }
 
@@ -130,14 +147,10 @@ class FilePickerMacOS extends FilePicker {
         .where((String path) => path.isNotEmpty)
         .map((String path) {
       final pathElements = path.split(':').where((e) => e.isNotEmpty).toList();
-      final alias = pathElements[0];
 
-      if (alias == 'alias macOS') {
-        return '/' + pathElements.sublist(1).join('/');
-      }
-
-      final volumeName = alias.substring(6);
-      return ['/Volumes', volumeName, ...pathElements.sublist(1)].join('/');
+      // first word is "alias" or "file" (file is for save dialog)
+      final volume = pathElements[0].split(' ').sublist(1).join(' ');
+      return ['/Volumes', volume, ...pathElements.sublist(1)].join('/');
     }).toList();
   }
 }

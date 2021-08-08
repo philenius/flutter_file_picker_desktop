@@ -128,6 +128,26 @@ void main() {
       );
     });
 
+    test(
+        'should generate the arguments for picking or entering file name to save',
+        () {
+      final picker = FilePickerLinux();
+
+      final cliArguments = picker.generateCommandLineArguments(
+        'Save file name:',
+        multipleFiles: false,
+        pickDirectory: false,
+        saveFile: true,
+        saveFileName: 'test.out',
+      );
+
+      expect(
+        cliArguments.join(' '),
+        equals(
+            """--file-selection --title Save file name: --save --filename=test.out"""),
+      );
+    });
+
     test('should generate the arguments for picking multiple files', () {
       final picker = FilePickerLinux();
 

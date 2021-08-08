@@ -1,4 +1,6 @@
 import 'dart:ffi';
+import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:path/path.dart' as p;
@@ -18,17 +20,29 @@ class FilePickerWindows extends FilePicker {
     required bool allowMultiple,
     required bool withData,
     required bool withReadStream,
+    required bool saveFile,
+    String? saveFileName,
   }) async {
     final comdlg32 = DynamicLibrary.open('comdlg32.dll');
 
     final getOpenFileNameW =
         comdlg32.lookupFunction<GetOpenFileNameW, GetOpenFileNameWDart>(
-            'GetOpenFileNameW');
+            saveFile ? 'GetSaveFileNameW' : 'GetOpenFileNameW');
 
     final Pointer<OPENFILENAMEW> openFileName = calloc<OPENFILENAMEW>();
     openFileName.ref.lStructSize = sizeOf<OPENFILENAMEW>();
     openFileName.ref.lpstrTitle = dialogTitle.toNativeUtf16();
     openFileName.ref.lpstrFile = calloc.allocate<Utf16>(maxPath);
+    if (saveFile && saveFileName != null) {
+      final Uint16List nativeString =
+          openFileName.ref.lpstrFile.cast<Uint16>().asTypedList(maxPath);
+      final safeName =
+          saveFileName.substring(0, min(maxPath - 1, saveFileName.length));
+      final units = safeName.codeUnits;
+      nativeString.setRange(0, units.length, units);
+      nativeString[units.length] = 0;
+    }
+
     openFileName.ref.lpstrFilter =
         fileTypeToFileFilter(type, allowedExtensions).toNativeUtf16();
     openFileName.ref.nMaxFile = maxPath;
