@@ -3,7 +3,37 @@ import 'dart:typed_data';
 
 import 'package:path/path.dart' as p;
 
+import 'file_picker.dart';
+import 'file_picker_linux.dart';
+import 'file_picker_macos.dart';
+import 'file_picker_windows.dart';
+import 'file_type.dart';
 import 'platform_file.dart';
+
+FilePicker instantiateFilePickerForCurrentPlatform() {
+  if (Platform.isLinux) {
+    return FilePickerLinux();
+  } else if (Platform.isWindows) {
+    return FilePickerWindows();
+  } else if (Platform.isMacOS) {
+    return FilePickerMacOS();
+  } else {
+    throw UnimplementedError(
+      'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
+    );
+  }
+}
+
+void validateFileFilter(FileType type, List<String>? allowedExtensions) {
+  if (type != FileType.custom && (allowedExtensions?.isNotEmpty ?? false)) {
+    throw ArgumentError(
+        'You are setting a type [$type]. Custom extension filters are only allowed with FileType.custom, please change it or remove filters.');
+  } else if (type == FileType.custom && (allowedExtensions?.isEmpty ?? true)) {
+    throw ArgumentError(
+      'If you are setting the file type to "custom", then a non-empty list of allowed file extensions must be provided.',
+    );
+  }
+}
 
 Future<List<PlatformFile>> filePathsToPlatformFiles(
   List<String> filePaths,

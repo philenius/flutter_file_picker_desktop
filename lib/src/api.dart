@@ -25,14 +25,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import 'dart:io';
-
 import 'package:file_picker_desktop/src/file_picker.dart';
-import 'package:file_picker_desktop/src/file_picker_macos.dart';
-import 'package:file_picker_desktop/src/file_picker_windows.dart';
 
-import 'file_picker_linux.dart';
 import 'file_picker_result.dart';
+import 'file_picker_utils.dart';
 import 'file_type.dart';
 
 /// Opens a dialog to let the user select a directory and returns its absolute
@@ -50,20 +46,7 @@ import 'file_type.dart';
 Future<String?> getDirectoryPath({
   String dialogTitle = 'Please select a directory:',
 }) {
-  FilePicker? filePicker;
-
-  if (Platform.isLinux) {
-    filePicker = FilePickerLinux();
-  } else if (Platform.isWindows) {
-    filePicker = FilePickerWindows();
-  } else if (Platform.isMacOS) {
-    filePicker = FilePickerMacOS();
-  } else {
-    throw UnimplementedError(
-      'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
-    );
-  }
-
+  FilePicker? filePicker = instantiateFilePickerForCurrentPlatform();
   return filePicker.getDirectoryPath(dialogTitle: dialogTitle);
 }
 
@@ -73,9 +56,11 @@ Future<String?> getDirectoryPath({
 /// [dialogTitle] is displayed at the top of the file selection dialog. This
 /// string can be used to specify instructions to the user.
 ///
-/// Default [type] set to [FileType.any] with [allowMultiple] set to [false]
-/// Optionally, [allowedExtensions] might be provided as a list of strings which
-/// represent the allowed file extension (e.g. `['pdf', 'svg', 'jpg']`).
+/// The file type filter [type] defaults to [FileType.any]. Optionally,
+/// [allowedExtensions] might be provided as a list of strings which represent
+/// the allowed file extension (e.g. `['pdf', 'svg', 'jpg']`).
+/// [allowMultiple], which defaults to [false], defines whether the user may
+/// pick more than one file.
 ///
 /// If [withData] is set, picked files will have its byte data immediately
 /// available on memory as `Uint8List` which can be useful if you are picking it
@@ -86,10 +71,6 @@ Future<String?> getDirectoryPath({
 /// If [withReadStream] is set, picked files will have its byte data available
 /// as a [Stream<List<int>>] which can be useful for uploading and processing
 /// large files. Defaults to `false`.
-///
-/// To open save file dialog (to select existing file or choose directory and
-/// input new file name) set [saveFile] to `true`. You can also specify
-/// default file name via [saveFileName].
 ///
 /// The result is wrapped in a [FilePickerResult] which contains helper getters
 /// with useful information regarding the picked [List<PlatformFile>].
@@ -106,31 +87,10 @@ Future<FilePickerResult?> pickFiles({
   bool allowMultiple = false,
   bool withData = false,
   bool withReadStream = false,
-  bool saveFile = false,
-  String? saveFileName,
 }) {
-  if (type != FileType.custom && (allowedExtensions?.isNotEmpty ?? false)) {
-    throw ArgumentError(
-        'You are setting a type [$type]. Custom extension filters are only allowed with FileType.custom, please change it or remove filters.');
-  } else if (type == FileType.custom && (allowedExtensions?.isEmpty ?? true)) {
-    throw ArgumentError(
-      'If you are setting the file type to "custom", then a non-empty list of allowed file extensions must be provided.',
-    );
-  }
-  FilePicker? filePicker;
+  validateFileFilter(type, allowedExtensions);
 
-  if (Platform.isLinux) {
-    filePicker = FilePickerLinux();
-  } else if (Platform.isWindows) {
-    filePicker = FilePickerWindows();
-  } else if (Platform.isMacOS) {
-    filePicker = FilePickerMacOS();
-  } else {
-    throw UnimplementedError(
-      'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
-    );
-  }
-
+  FilePicker? filePicker = instantiateFilePickerForCurrentPlatform();
   return filePicker.pickFiles(
     dialogTitle: dialogTitle,
     type: type,
@@ -138,7 +98,41 @@ Future<FilePickerResult?> pickFiles({
     allowMultiple: allowMultiple,
     withData: withData,
     withReadStream: withReadStream,
-    saveFile: saveFile,
-    saveFileName: saveFileName,
+  );
+}
+
+/// Opens a save file dialog which lets the user select a location and a file
+/// name to save a file.
+///
+/// [defaultFileName] can be set to a non-empty string to provide a default file
+/// name.
+///
+/// The file type filter [type] defaults to [FileType.any]. Optionally,
+/// [allowedExtensions] might be provided as a list of strings which represent
+/// the allowed file extension (e.g. `['pdf', 'svg', 'jpg']`). [type] and
+/// [allowedExtensions] are just a proposal to the user as the save file dialog
+/// does not enforce these restrictions.
+///
+/// Returns a [Future<String?>] which resolves to the absolute path of the
+/// selected file, if the user selected a file. Returns [null] if aborted.
+///
+/// Throws [UnimplementedError] on unsupported platforms. Throws [ArgumentError]
+/// if the given combination of arguments is invalid. May throw an [Exception]
+/// if the executable for opening the save file dialog could not be found or the
+/// result of the dialog couldn't be interpreted.
+Future<String?> saveFile({
+  String dialogTitle = 'Please select the file destination:',
+  FileType type = FileType.any,
+  List<String>? allowedExtensions,
+  String? defaultFileName,
+}) {
+  validateFileFilter(type, allowedExtensions);
+
+  FilePicker? filePicker = instantiateFilePickerForCurrentPlatform();
+  return filePicker.saveFile(
+    allowedExtensions: allowedExtensions,
+    dialogTitle: dialogTitle,
+    defaultFileName: defaultFileName,
+    type: type,
   );
 }

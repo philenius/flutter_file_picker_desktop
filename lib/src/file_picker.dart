@@ -9,8 +9,6 @@ abstract class FilePicker {
     required bool allowMultiple,
     required bool withData,
     required bool withReadStream,
-    required bool saveFile,
-    String? saveFileName,
   }) async =>
       throw UnimplementedError('pickFiles() has not been implemented.');
 
@@ -18,4 +16,12 @@ abstract class FilePicker {
     required String dialogTitle,
   }) async =>
       throw UnimplementedError('getDirectoryPath() has not been implemented.');
+
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required FileType type,
+    List<String>? allowedExtensions,
+    String? defaultFileName,
+  }) async =>
+      throw UnimplementedError('saveFile() has not been implemented');
 }
