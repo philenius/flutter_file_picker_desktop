@@ -15,8 +15,6 @@ class FilePickerLinux extends FilePicker {
     required bool allowMultiple,
     required bool withData,
     required bool withReadStream,
-    required bool saveFile,
-    String? saveFileName,
   }) async {
     final String executable = await _getPathToExecutable();
     final String fileFilter = fileTypeToFileFilter(
@@ -28,8 +26,6 @@ class FilePickerLinux extends FilePicker {
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
       pickDirectory: false,
-      saveFile: saveFile,
-      saveFileName: saveFileName,
     );
 
     final String? fileSelectionResult = await runExecutableWithArguments(
@@ -60,6 +56,27 @@ class FilePickerLinux extends FilePicker {
     final arguments = generateCommandLineArguments(
       dialogTitle,
       pickDirectory: true,
+    );
+    return await runExecutableWithArguments(executable, arguments);
+  }
+
+  @override
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required FileType type,
+    List<String>? allowedExtensions,
+    String? defaultFileName,
+  }) async {
+    final executable = await _getPathToExecutable();
+    final String fileFilter = fileTypeToFileFilter(
+      type,
+      allowedExtensions,
+    );
+    final arguments = generateCommandLineArguments(
+      dialogTitle,
+      defaultFileName: defaultFileName,
+      fileFilter: fileFilter,
+      saveFile: true,
     );
     return await runExecutableWithArguments(executable, arguments);
   }
@@ -104,14 +121,14 @@ class FilePickerLinux extends FilePicker {
     bool multipleFiles = false,
     bool pickDirectory = false,
     bool saveFile = false,
-    String? saveFileName,
+    String? defaultFileName,
   }) {
     final arguments = ['--file-selection', '--title', dialogTitle];
 
     if (saveFile) {
       arguments.add('--save');
-      if (saveFileName != null) {
-        arguments.add('--filename=$saveFileName');
+      if (defaultFileName != null) {
+        arguments.add('--filename=$defaultFileName');
       }
     }
 

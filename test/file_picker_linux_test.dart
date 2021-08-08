@@ -138,7 +138,7 @@ void main() {
         multipleFiles: false,
         pickDirectory: false,
         saveFile: true,
-        saveFileName: 'test.out',
+        defaultFileName: 'test.out',
       );
 
       expect(
