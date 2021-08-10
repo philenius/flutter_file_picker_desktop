@@ -2,7 +2,11 @@
 
 <a href="https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml"><img alt="CI Pipeline" src="https://github.com/philenius/flutter_file_picker_desktop/actions/workflows/main.yml/badge.svg"></a> <a href="https://pub.dev/packages/file_picker_desktop"><img src="https://img.shields.io/pub/v/file_picker_desktop"></a> <a href="https://github.com/philenius/flutter_file_picker_desktop/issues"><img src="https://img.shields.io/github/issues/philenius/flutter_file_picker_desktop"></a> <img src="https://img.shields.io/github/license/philenius/flutter_file_picker_desktop">
 
-This repository contains a Dart package that allows you to use a native file explorer on Windows, macOS, and Linux for picking files and directories.
+This repository contains a Dart package that allows you to use a native file explorer on Windows, macOS, and Linux for three things:
+
+* picking files
+* picking directories
+* saving files
 
 
 
@@ -11,8 +15,9 @@ This repository contains a Dart package that allows you to use a native file exp
 * :tada: This package **does not require** [Go Flutter](https://github.com/go-flutter-desktop/go-flutter). This package is written entirely in Dart!!! No dependencies on Go or Go Flutter.
 * :floppy_disk: Simple API for picking a single file or multiple files with support for filtering the allowed file extensions.
 * :file_folder: Simple API for picking a directory.
+* :cd: Simple API for saving a file.
 * :wrench: Different filtering options for file types included (+ customizable).
-* :tada: Customizable title of the file picker dialog.
+* :tada: Customizable title of the dialog.
 * :robot: Runs on Linux, macOS, and Windows.
 
 
@@ -24,13 +29,13 @@ This repository contains a Dart package that allows you to use a native file exp
 The following screenshots show the file picker dialog on Linux, macOS, and Windows:
 
 
-| Linux                                                        |                                                              |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![Select file on Linux](screenshots/screenshotLinuxPickFiles.png) | ![Select directory on Linux](screenshots/screenshotLinuxPickDirectory.png) |
-| **macOS**                                                    |                                                              |
-| ![Select file on macOS](screenshots/screenshotMacOSFile.png) | ![Select directory on macOS](screenshots/screenshotMacOSDirectory.png) |
-| **Windows**                                                  |                                                              |
-| ![Select file on Windows](screenshots/screenshotWindowsPickFiles.png) | ![Select directory on Windows](screenshots/screenshotWindowsPickDirectory.png) |
+| Linux File Picker                                            | Linux Directory Picker                                       | Linux Save File Dialog                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![Select file on Linux](screenshots/screenshotLinuxPickFiles.png) | ![Select directory on Linux](screenshots/screenshotLinuxPickDirectory.png) | ![Select directory on Linux](screenshots/screenshotLinuxSaveFile.png) |
+| **macOS File Picker**                                        | **macOS Directory Picker**                                   | **macOS Save File Dialog**                                   |
+| ![Select file on macOS](screenshots/screenshotMacOSFile.png) | ![Select directory on macOS](screenshots/screenshotMacOSDirectory.png) |                                                              |
+| **Windows**                                                  | **Windows Directory Picker**                                 | **Windows Save File Dialog**                                 |
+| ![Select file on Windows](screenshots/screenshotWindowsPickFiles.png) | ![Select directory on Windows](screenshots/screenshotWindowsPickDirectory.png) |                                                              |
 
 
 
@@ -42,7 +47,7 @@ The following screenshots show the file picker dialog on Linux, macOS, and Windo
 ...
 
 dependencies:
-  file_picker_desktop: ^1.0.2
+  file_picker_desktop: ^1.1.0
 
 ```
 
@@ -52,7 +57,7 @@ dependencies:
 import 'package:file_picker_desktop/file_picker_desktop.dart';
 ```
 
-### Single File:
+### Dialog for picking a single File:
 
 ```dart
 try {
@@ -69,7 +74,7 @@ try {
 }
 ```
 
-### Multiple files:
+### Dialog for picking multiple files:
 
 ```dart
 try {
@@ -89,7 +94,7 @@ try {
 }
 ```
 
-### Multiple files with extension filter:
+### Dialog for picking multiple files with extension filter:
 
 ```dart
 final result = await pickFiles(
@@ -99,7 +104,7 @@ final result = await pickFiles(
 );
 ```
 
-### Load result and file details:
+### Load the results and file details:
 
 ```dart
 FilePickerResult? result = await pickFiles();
@@ -116,6 +121,41 @@ if (result != null) {
   // User canceled the picker
 }
 ```
+
+### Dialog for picking a directory:
+
+```dart
+try {
+  final selectedDirectory = await getDirectoryPath();
+  if (selectedDirectory != null) {
+    File directory = File(selectedDirectory);
+  } else {
+    // User canceled the picker
+  }
+} catch (e) {
+  print(e);
+}
+```
+
+### Dialog for saving a file:
+
+```dart
+try {
+  final String? selectedFileName = await saveFile(
+    defaultFileName: 'default-file.txt',
+  );
+
+  if (selectedFileName != null) {
+  	File file = File(selectedFileName);
+  } else {
+    // User canceled the picker
+  }
+} catch (e) {
+    print(e);
+}
+```
+
+
 
 
 

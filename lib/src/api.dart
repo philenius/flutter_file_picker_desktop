@@ -115,6 +115,9 @@ Future<FilePickerResult?> pickFiles({
 ///
 /// Returns a [Future<String?>] which resolves to the absolute path of the
 /// selected file, if the user selected a file. Returns [null] if aborted.
+/// Attention: this function does not actually save a file. It only opens the
+/// dialog to let the user choose a location and file name. This function only
+/// returns the **path** to this (non-existing) file.
 ///
 /// Throws [UnimplementedError] on unsupported platforms. Throws [ArgumentError]
 /// if the given combination of arguments is invalid. May throw an [Exception]
