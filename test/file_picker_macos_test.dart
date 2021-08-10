@@ -58,7 +58,7 @@ void main() {
     test('should escape backslashes in the title of the dialog', () {
       final picker = FilePickerMacOS();
 
-      final escapedTitle = picker.escapeDialogTitle(
+      final escapedTitle = picker.escapeString(
         'Please select files that contain a \\:',
       );
 
@@ -73,7 +73,7 @@ void main() {
     test('should escape line breaks in the title of the dialog', () {
       final picker = FilePickerMacOS();
 
-      final escapedTitle = picker.escapeDialogTitle(
+      final escapedTitle = picker.escapeString(
         'Please continue reading\nafter the line break:',
       );
 
@@ -88,7 +88,7 @@ void main() {
     test('should escape double quotes in the title of the dialog', () {
       final picker = FilePickerMacOS();
 
-      final escapedTitle = picker.escapeDialogTitle(
+      final escapedTitle = picker.escapeString(
         'Please select a "quoted" file:',
       );
 
@@ -217,7 +217,7 @@ void main() {
         multipleFiles: false,
         pickDirectory: false,
         saveFile: true,
-        saveFileName: 'test.out',
+        defaultFileName: 'test.out',
       );
 
       expect(

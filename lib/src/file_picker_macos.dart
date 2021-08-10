@@ -14,8 +14,6 @@ class FilePickerMacOS extends FilePicker {
     required bool allowMultiple,
     required bool withData,
     required bool withReadStream,
-    required bool saveFile,
-    String? saveFileName,
   }) async {
     final String executable = await isExecutableOnPath('osascript');
     final String fileFilter = fileTypeToFileFilter(
@@ -23,12 +21,10 @@ class FilePickerMacOS extends FilePicker {
       allowedExtensions,
     );
     final List<String> arguments = generateCommandLineArguments(
-      escapeDialogTitle(dialogTitle),
+      dialogTitle,
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
       pickDirectory: false,
-      saveFile: saveFile,
-      saveFileName: saveFileName,
     );
 
     final String? fileSelectionResult = await runExecutableWithArguments(
@@ -57,7 +53,7 @@ class FilePickerMacOS extends FilePicker {
   }) async {
     final String executable = await isExecutableOnPath('osascript');
     final List<String> arguments = generateCommandLineArguments(
-      escapeDialogTitle(dialogTitle),
+      dialogTitle,
       pickDirectory: true,
     );
 
@@ -70,6 +66,36 @@ class FilePickerMacOS extends FilePicker {
     }
 
     return resultStringToFilePaths(directorySelectionResult).first;
+  }
+
+  @override
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required FileType type,
+    List<String>? allowedExtensions,
+    String? defaultFileName,
+  }) async {
+    final String executable = await isExecutableOnPath('osascript');
+    final String fileFilter = fileTypeToFileFilter(
+      type,
+      allowedExtensions,
+    );
+    final List<String> arguments = generateCommandLineArguments(
+      dialogTitle,
+      fileFilter: fileFilter,
+      saveFile: true,
+      defaultFileName: defaultFileName,
+    );
+
+    final String? saveFileResult = await runExecutableWithArguments(
+      executable,
+      arguments,
+    );
+    if (saveFileResult == null) {
+      return null;
+    }
+
+    return resultStringToFilePaths(saveFileResult).first;
   }
 
   String fileTypeToFileFilter(FileType type, List<String>? allowedExtensions) {
@@ -97,7 +123,7 @@ class FilePickerMacOS extends FilePicker {
     bool multipleFiles = false,
     bool pickDirectory = false,
     bool saveFile = false,
-    String? saveFileName,
+    String? defaultFileName,
   }) {
     final arguments = ['-e'];
 
@@ -111,8 +137,8 @@ class FilePickerMacOS extends FilePicker {
       if (saveFile) {
         argument += 'name ';
 
-        if (saveFileName != null) {
-          argument += 'default name "$saveFileName" ';
+        if (defaultFileName != null) {
+          argument += 'default name "${escapeString(defaultFileName)}" ';
         }
       } else {
         argument += 'of type {$fileFilter} ';
@@ -123,13 +149,13 @@ class FilePickerMacOS extends FilePicker {
       }
     }
 
-    argument += 'with prompt "$dialogTitle"';
+    argument += 'with prompt "${escapeString(dialogTitle)}"';
     arguments.add(argument);
 
     return arguments;
   }
 
-  String escapeDialogTitle(String dialogTitle) => dialogTitle
+  String escapeString(String dialogTitle) => dialogTitle
       .replaceAll('\\', '\\\\')
       .replaceAll('"', '\\"')
       .replaceAll('\n', '\\\n');
