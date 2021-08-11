@@ -35,7 +35,7 @@ The following screenshots show the file picker dialog on Linux, macOS, and Windo
 | **macOS File Picker**                                        | **macOS Directory Picker**                                   | **macOS Save File Dialog**                                   |
 | ![Select file on macOS](screenshots/screenshotMacOSFile.png) | ![Select directory on macOS](screenshots/screenshotMacOSDirectory.png) |                                                              |
 | **Windows**                                                  | **Windows Directory Picker**                                 | **Windows Save File Dialog**                                 |
-| ![Select file on Windows](screenshots/screenshotWindowsPickFiles.png) | ![Select directory on Windows](screenshots/screenshotWindowsPickDirectory.png) |                                                              |
+| ![Select file on Windows](screenshots/screenshotWindowsPickFiles.png) | ![Select directory on Windows](screenshots/screenshotWindowsPickDirectory.png) | ![](screenshots/screenshotWindowsSaveFile.png)               |
 
 
 
