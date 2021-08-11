@@ -20,46 +20,52 @@ class FilePickerWindows extends FilePicker {
     required bool allowMultiple,
     required bool withData,
     required bool withReadStream,
-    required bool saveFile,
-    String? saveFileName,
   }) async {
     final comdlg32 = DynamicLibrary.open('comdlg32.dll');
 
     final getOpenFileNameW =
         comdlg32.lookupFunction<GetOpenFileNameW, GetOpenFileNameWDart>(
-            saveFile ? 'GetSaveFileNameW' : 'GetOpenFileNameW');
+            'GetOpenFileNameW');
 
-    final Pointer<OPENFILENAMEW> openFileName = calloc<OPENFILENAMEW>();
-    openFileName.ref.lStructSize = sizeOf<OPENFILENAMEW>();
-    openFileName.ref.lpstrTitle = dialogTitle.toNativeUtf16();
-    openFileName.ref.lpstrFile = calloc.allocate<Utf16>(maxPath);
-    if (saveFile && saveFileName != null) {
-      final Uint16List nativeString =
-          openFileName.ref.lpstrFile.cast<Uint16>().asTypedList(maxPath);
-      final safeName =
-          saveFileName.substring(0, min(maxPath - 1, saveFileName.length));
-      final units = safeName.codeUnits;
-      nativeString.setRange(0, units.length, units);
-      nativeString[units.length] = 0;
-    }
+    final Pointer<OPENFILENAMEW> openFileNameW = _instantiateOpenFileNameW(
+        dialogTitle, type, allowedExtensions, null, allowMultiple);
 
-    openFileName.ref.lpstrFilter =
-        fileTypeToFileFilter(type, allowedExtensions).toNativeUtf16();
-    openFileName.ref.nMaxFile = maxPath;
-    openFileName.ref.lpstrInitialDir = ''.toNativeUtf16();
-    openFileName.ref.flags = ofnExplorer | ofnFileMustExist | ofnHideReadOnly;
-    if (allowMultiple) {
-      openFileName.ref.flags |= ofnAllowMultiSelect;
-    }
-
-    final result = getOpenFileNameW(openFileName);
+    final result = getOpenFileNameW(openFileNameW);
     if (result == 1) {
       final filePaths =
-          _extractSelectedFilesFromOpenFileNameW(openFileName.ref);
+          _extractSelectedFilesFromOpenFileNameW(openFileNameW.ref);
       final platformFiles =
           await filePathsToPlatformFiles(filePaths, withReadStream, withData);
 
       return FilePickerResult(platformFiles);
+    }
+    return null;
+  }
+
+  @override
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required FileType type,
+    List<String>? allowedExtensions,
+    String? defaultFileName,
+  }) async {
+    final comdlg32 = DynamicLibrary.open('comdlg32.dll');
+
+    final getSaveFileNameW =
+        comdlg32.lookupFunction<GetSaveFileNameW, GetSaveFileNameWDart>(
+            'GetSaveFileNameW');
+
+    final Pointer<OPENFILENAMEW> openFileNameW = _instantiateOpenFileNameW(
+        dialogTitle, type, allowedExtensions, defaultFileName, false);
+
+    final result = getSaveFileNameW(openFileNameW);
+    if (result == 1) {
+      final filePaths =
+          _extractSelectedFilesFromOpenFileNameW(openFileNameW.ref);
+      final platformFiles =
+          await filePathsToPlatformFiles(filePaths, false, false);
+
+      return platformFiles.first.path;
     }
     return null;
   }
@@ -94,6 +100,37 @@ class FilePickerWindows extends FilePicker {
       default:
         throw Exception('unknown file type');
     }
+  }
+
+  Pointer<OPENFILENAMEW> _instantiateOpenFileNameW(
+    String dialogTitle,
+    FileType type,
+    List<String>? allowedExtensions,
+    String? defaultFileName,
+    bool allowMultiple,
+  ) {
+    final Pointer<OPENFILENAMEW> openFileNameW = calloc<OPENFILENAMEW>();
+    openFileNameW.ref.lStructSize = sizeOf<OPENFILENAMEW>();
+    openFileNameW.ref.lpstrTitle = dialogTitle.toNativeUtf16();
+    openFileNameW.ref.lpstrFile = calloc.allocate<Utf16>(maxPath);
+    openFileNameW.ref.lpstrFilter =
+        fileTypeToFileFilter(type, allowedExtensions).toNativeUtf16();
+    openFileNameW.ref.nMaxFile = maxPath;
+    openFileNameW.ref.lpstrInitialDir = ''.toNativeUtf16();
+    openFileNameW.ref.flags = ofnExplorer | ofnFileMustExist | ofnHideReadOnly;
+    if (allowMultiple) {
+      openFileNameW.ref.flags |= ofnAllowMultiSelect;
+    }
+    if (defaultFileName != null) {
+      final Uint16List nativeString =
+          openFileNameW.ref.lpstrFile.cast<Uint16>().asTypedList(maxPath);
+      final safeName = defaultFileName.substring(
+          0, min(maxPath - 1, defaultFileName.length));
+      final units = safeName.codeUnits;
+      nativeString.setRange(0, units.length, units);
+      nativeString[units.length] = 0;
+    }
+    return openFileNameW;
   }
 
   /// Uses the Win32 API to display a dialog box that enables the user to select a folder.
