@@ -4,20 +4,10 @@ import 'package:file_picker_desktop/src/file_picker_linux.dart';
 import 'package:file_picker_desktop/src/file_type.dart';
 import 'package:test/test.dart';
 
-import 'common.dart';
-
 void main() {
   final imageTestFile = '/tmp/test_linux.jpg';
   final pdfTestFile = '/tmp/test_linux.pdf';
   final yamlTestFile = '/tmp/test_linux.yml';
-
-  setUpAll(
-    () => setUpTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
-  );
-
-  tearDownAll(
-    () => tearDownTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
-  );
 
   group('fileTypeToFileFilter()', () {
     test('should return the file filter', () {
