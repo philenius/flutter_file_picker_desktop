@@ -31,11 +31,11 @@ The following screenshots show the file picker dialog on Linux, macOS, and Windo
 
 | Linux File Picker                                            | Linux Directory Picker                                       | Linux Save File Dialog                                       |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![Select file on Linux](screenshots/screenshotLinuxPickFiles.png) | ![Select directory on Linux](screenshots/screenshotLinuxPickDirectory.png) | ![Select directory on Linux](screenshots/screenshotLinuxSaveFile.png) |
+| ![Select file on Linux](screenshots/screenshotLinuxPickFiles.png) | ![Select directory on Linux](screenshots/screenshotLinuxPickDirectory.png) | ![Save file on Linux](screenshots/screenshotLinuxSaveFile.png) |
 | **macOS File Picker**                                        | **macOS Directory Picker**                                   | **macOS Save File Dialog**                                   |
-| ![Select file on macOS](screenshots/screenshotMacOSFile.png) | ![Select directory on macOS](screenshots/screenshotMacOSDirectory.png) |                                                              |
+| ![Select file on macOS](screenshots/screenshotMacOSFile.png) | ![Select directory on macOS](screenshots/screenshotMacOSDirectory.png) | ![Save file on macOS](screenshots/screenshotMacOsSaveFile.png) |
 | **Windows**                                                  | **Windows Directory Picker**                                 | **Windows Save File Dialog**                                 |
-| ![Select file on Windows](screenshots/screenshotWindowsPickFiles.png) | ![Select directory on Windows](screenshots/screenshotWindowsPickDirectory.png) | ![](screenshots/screenshotWindowsSaveFile.png)               |
+| ![Select file on Windows](screenshots/screenshotWindowsPickFiles.png) | ![Select directory on Windows](screenshots/screenshotWindowsPickDirectory.png) | ![Save file on Windows](screenshots/screenshotWindowsSaveFile.png) |
 
 
 
