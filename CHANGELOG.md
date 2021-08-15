@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Add new feature from merge request [#7 add save file dialog support](https://github.com/philenius/flutter_file_picker_desktop/pull/7):Credit for the implementation goes to @f69. Thank you.
+
 ## 1.0.2
 
 * Fix issue [#4 Cannot open file in MacOS](https://github.com/philenius/flutter_file_picker_desktop/issues/4):

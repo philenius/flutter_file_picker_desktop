@@ -44,7 +44,6 @@ The following screenshots show the file picker dialog on Linux, macOS, and Windo
 ### Add package to `pubspec.yaml`:
 
 ```yaml
-...
 
 dependencies:
   file_picker_desktop: ^1.1.0
