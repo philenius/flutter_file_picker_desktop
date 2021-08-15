@@ -110,6 +110,51 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _saveFile() async {
+    final allowedFileTypes = this
+        ._allowedFileTypesController
+        .text
+        .split(',')
+        .map((fileType) => fileType.trim())
+        .toList();
+
+    try {
+      final String? result = await saveFile(
+        allowedExtensions:
+            this._fileType == FileType.custom ? allowedFileTypes : null,
+        dialogTitle: 'Please select the output file:',
+        defaultFileName: 'default-file.txt',
+        type: this._fileType,
+      );
+
+      if (result != null) {
+        setState(() {
+          this._selection = [result];
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('User closed the dialog without selecting a file.'),
+          ),
+        );
+        setState(() {
+          this._selection = [];
+        });
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Exception: $e'),
+        ),
+      );
+      setState(() {
+        this._selection = [];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,6 +251,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text(
                       _multipleFiles ? 'Pick files' : 'Pick a file',
                     ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                ElevatedButton(
+                  onPressed: this._saveFile,
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text('Save a file'),
                   ),
                 ),
               ],

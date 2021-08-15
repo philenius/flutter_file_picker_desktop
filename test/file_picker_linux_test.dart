@@ -4,20 +4,10 @@ import 'package:file_picker_desktop/src/file_picker_linux.dart';
 import 'package:file_picker_desktop/src/file_type.dart';
 import 'package:test/test.dart';
 
-import 'common.dart';
-
 void main() {
   final imageTestFile = '/tmp/test_linux.jpg';
   final pdfTestFile = '/tmp/test_linux.pdf';
   final yamlTestFile = '/tmp/test_linux.yml';
-
-  setUpAll(
-    () => setUpTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
-  );
-
-  tearDownAll(
-    () => tearDownTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
-  );
 
   group('fileTypeToFileFilter()', () {
     test('should return the file filter', () {
@@ -125,6 +115,26 @@ void main() {
       expect(
         cliArguments.join(' '),
         equals("""--file-selection --title Select a file:"""),
+      );
+    });
+
+    test(
+        'should generate the arguments for picking or entering file name to save',
+        () {
+      final picker = FilePickerLinux();
+
+      final cliArguments = picker.generateCommandLineArguments(
+        'Save file name:',
+        multipleFiles: false,
+        pickDirectory: false,
+        saveFile: true,
+        defaultFileName: 'test.out',
+      );
+
+      expect(
+        cliArguments.join(' '),
+        equals(
+            """--file-selection --title Save file name: --save --filename=test.out"""),
       );
     });
 

@@ -21,7 +21,7 @@ class FilePickerMacOS extends FilePicker {
       allowedExtensions,
     );
     final List<String> arguments = generateCommandLineArguments(
-      escapeDialogTitle(dialogTitle),
+      dialogTitle,
       fileFilter: fileFilter,
       multipleFiles: allowMultiple,
       pickDirectory: false,
@@ -53,7 +53,7 @@ class FilePickerMacOS extends FilePicker {
   }) async {
     final String executable = await isExecutableOnPath('osascript');
     final List<String> arguments = generateCommandLineArguments(
-      escapeDialogTitle(dialogTitle),
+      dialogTitle,
       pickDirectory: true,
     );
 
@@ -66,6 +66,36 @@ class FilePickerMacOS extends FilePicker {
     }
 
     return resultStringToFilePaths(directorySelectionResult).first;
+  }
+
+  @override
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required FileType type,
+    List<String>? allowedExtensions,
+    String? defaultFileName,
+  }) async {
+    final String executable = await isExecutableOnPath('osascript');
+    final String fileFilter = fileTypeToFileFilter(
+      type,
+      allowedExtensions,
+    );
+    final List<String> arguments = generateCommandLineArguments(
+      dialogTitle,
+      fileFilter: fileFilter,
+      saveFile: true,
+      defaultFileName: defaultFileName,
+    );
+
+    final String? saveFileResult = await runExecutableWithArguments(
+      executable,
+      arguments,
+    );
+    if (saveFileResult == null) {
+      return null;
+    }
+
+    return resultStringToFilePaths(saveFileResult).first;
   }
 
   String fileTypeToFileFilter(FileType type, List<String>? allowedExtensions) {
@@ -92,27 +122,40 @@ class FilePickerMacOS extends FilePicker {
     String fileFilter = '',
     bool multipleFiles = false,
     bool pickDirectory = false,
+    bool saveFile = false,
+    String? defaultFileName,
   }) {
     final arguments = ['-e'];
 
     String argument = 'choose ';
+
     if (pickDirectory) {
       argument += 'folder ';
     } else {
-      argument += 'file of type {$fileFilter} ';
+      argument += 'file ';
 
-      if (multipleFiles) {
-        argument += 'with multiple selections allowed ';
+      if (saveFile) {
+        argument += 'name ';
+
+        if (defaultFileName != null) {
+          argument += 'default name "${escapeString(defaultFileName)}" ';
+        }
+      } else {
+        argument += 'of type {$fileFilter} ';
+
+        if (multipleFiles) {
+          argument += 'with multiple selections allowed ';
+        }
       }
     }
 
-    argument += 'with prompt "$dialogTitle"';
+    argument += 'with prompt "${escapeString(dialogTitle)}"';
     arguments.add(argument);
 
     return arguments;
   }
 
-  String escapeDialogTitle(String dialogTitle) => dialogTitle
+  String escapeString(String dialogTitle) => dialogTitle
       .replaceAll('\\', '\\\\')
       .replaceAll('"', '\\"')
       .replaceAll('\n', '\\\n');
@@ -130,14 +173,10 @@ class FilePickerMacOS extends FilePicker {
         .where((String path) => path.isNotEmpty)
         .map((String path) {
       final pathElements = path.split(':').where((e) => e.isNotEmpty).toList();
-      final alias = pathElements[0];
 
-      if (alias == 'alias macOS') {
-        return '/' + pathElements.sublist(1).join('/');
-      }
-
-      final volumeName = alias.substring(6);
-      return ['/Volumes', volumeName, ...pathElements.sublist(1)].join('/');
+      // first word is "alias" or "file" (file is for save dialog)
+      final volume = pathElements[0].split(' ').sublist(1).join(' ');
+      return ['/Volumes', volume, ...pathElements.sublist(1)].join('/');
     }).toList();
   }
 }

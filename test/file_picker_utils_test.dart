@@ -1,6 +1,7 @@
 @TestOn('linux || mac-os')
 
 import 'package:file_picker_desktop/src/file_picker_utils.dart';
+import 'package:file_picker_desktop/src/file_type.dart';
 import 'package:test/test.dart';
 
 import 'common.dart';
@@ -17,6 +18,32 @@ void main() {
   tearDownAll(
     () => tearDownTestFiles(imageTestFile, pdfTestFile, yamlTestFile),
   );
+
+  group('validateFileFilter()', () {
+    test(
+        'should throw an exception if file type is set to "custom" and no list of allowed file extensions was given',
+        () {
+      expect(
+        () => validateFileFilter(FileType.custom, null),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => validateFileFilter(FileType.custom, []),
+        throwsArgumentError,
+      );
+    });
+
+    test(
+        'should throw an exception if the file type is not "custom" but a list of allowed file extensions was given',
+        () {
+      expect(
+        () => validateFileFilter(FileType.audio, ['png']),
+        throwsArgumentError,
+      );
+    });
+  });
+
   group('filePathsToPlatformFiles()', () {
     test('should transform a list of file paths into a list of PlatformFiles',
         () async {
