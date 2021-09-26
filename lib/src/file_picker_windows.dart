@@ -90,7 +90,7 @@ class FilePickerWindows extends FilePicker {
       case FileType.audio:
         return 'Audios (*.mp3)\x00*.mp3\x00All Files (*.*)\x00*.*\x00\x00';
       case FileType.custom:
-        return 'Files (*.${allowedExtensions!.join(',*.')})\x00\x00';
+        return 'Files (*.${allowedExtensions!.join(',*.')})\x00*.${allowedExtensions.join(';*.')}\x00\x00';
       case FileType.image:
         return 'Images (*.jpeg,*.png,*.gif)\x00*.jpg;*.jpeg;*.png;*.gif\x00All Files (*.*)\x00*.*\x00\x00';
       case FileType.media:
@@ -112,10 +112,10 @@ class FilePickerWindows extends FilePicker {
     final Pointer<OPENFILENAMEW> openFileNameW = calloc<OPENFILENAMEW>();
     openFileNameW.ref.lStructSize = sizeOf<OPENFILENAMEW>();
     openFileNameW.ref.lpstrTitle = dialogTitle.toNativeUtf16();
-    openFileNameW.ref.lpstrFile = calloc.allocate<Utf16>(maxPath);
+    openFileNameW.ref.lpstrFile = calloc.allocate<Utf16>(maximumPathLength);
     openFileNameW.ref.lpstrFilter =
         fileTypeToFileFilter(type, allowedExtensions).toNativeUtf16();
-    openFileNameW.ref.nMaxFile = maxPath;
+    openFileNameW.ref.nMaxFile = maximumPathLength;
     openFileNameW.ref.lpstrInitialDir = ''.toNativeUtf16();
     openFileNameW.ref.flags = ofnExplorer | ofnFileMustExist | ofnHideReadOnly;
     if (allowMultiple) {
@@ -123,9 +123,9 @@ class FilePickerWindows extends FilePicker {
     }
     if (defaultFileName != null) {
       final Uint16List nativeString =
-          openFileNameW.ref.lpstrFile.cast<Uint16>().asTypedList(maxPath);
+          openFileNameW.ref.lpstrFile.cast<Uint16>().asTypedList(maximumPathLength);
       final safeName = defaultFileName.substring(
-          0, min(maxPath - 1, defaultFileName.length));
+          0, min(maximumPathLength - 1, defaultFileName.length));
       final units = safeName.codeUnits;
       nativeString.setRange(0, units.length, units);
       nativeString[units.length] = 0;
@@ -147,7 +147,7 @@ class FilePickerWindows extends FilePicker {
     final Pointer<BROWSEINFOA> browseInfo = calloc<BROWSEINFOA>();
     browseInfo.ref.hwndOwner = nullptr;
     browseInfo.ref.pidlRoot = nullptr;
-    browseInfo.ref.pszDisplayName = calloc.allocate<Utf16>(maxPath);
+    browseInfo.ref.pszDisplayName = calloc.allocate<Utf16>(maximumPathLength);
     browseInfo.ref.lpszTitle = dialogTitle.toNativeUtf16();
     browseInfo.ref.ulFlags =
         bifEditBox | bifNewDialogStyle | bifReturnOnlyFsDirs;
@@ -178,7 +178,7 @@ class FilePickerWindows extends FilePicker {
         shell32.lookupFunction<SHGetPathFromIDListW, SHGetPathFromIDListWDart>(
             'SHGetPathFromIDListW');
 
-    final Pointer<Utf16> pszPath = calloc.allocate<Utf16>(maxPath);
+    final Pointer<Utf16> pszPath = calloc.allocate<Utf16>(maximumPathLength);
 
     final int result = shGetPathFromIDListW(lpItem, pszPath);
     if (result == 0x00000000) {
