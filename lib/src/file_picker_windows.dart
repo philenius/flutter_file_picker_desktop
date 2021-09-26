@@ -113,21 +113,26 @@ class FilePickerWindows extends FilePicker {
     String? defaultFileName,
     bool allowMultiple,
   ) {
+    final lpstrFileBufferSize = 20 * maximumPathLength;
     final Pointer<OPENFILENAMEW> openFileNameW = calloc<OPENFILENAMEW>();
+
     openFileNameW.ref.lStructSize = sizeOf<OPENFILENAMEW>();
     openFileNameW.ref.lpstrTitle = dialogTitle.toNativeUtf16();
-    openFileNameW.ref.lpstrFile = calloc.allocate<Utf16>(maximumPathLength);
+    openFileNameW.ref.lpstrFile = calloc.allocate<Utf16>(lpstrFileBufferSize);
     openFileNameW.ref.lpstrFilter =
         fileTypeToFileFilter(type, allowedExtensions).toNativeUtf16();
-    openFileNameW.ref.nMaxFile = maximumPathLength;
+    openFileNameW.ref.nMaxFile = lpstrFileBufferSize;
     openFileNameW.ref.lpstrInitialDir = ''.toNativeUtf16();
     openFileNameW.ref.flags = ofnExplorer | ofnFileMustExist | ofnHideReadOnly;
+
     if (allowMultiple) {
       openFileNameW.ref.flags |= ofnAllowMultiSelect;
     }
+
     if (defaultFileName != null) {
-      final Uint16List nativeString =
-          openFileNameW.ref.lpstrFile.cast<Uint16>().asTypedList(maximumPathLength);
+      final Uint16List nativeString = openFileNameW.ref.lpstrFile
+          .cast<Uint16>()
+          .asTypedList(maximumPathLength);
       final safeName = defaultFileName.substring(
           0, min(maximumPathLength - 1, defaultFileName.length));
       final units = safeName.codeUnits;
