@@ -31,15 +31,18 @@ class FilePickerWindows extends FilePicker {
         dialogTitle, type, allowedExtensions, null, allowMultiple);
 
     final result = getOpenFileNameW(openFileNameW);
+    FilePickerResult? returnValue;
     if (result == 1) {
       final filePaths =
           _extractSelectedFilesFromOpenFileNameW(openFileNameW.ref);
       final platformFiles =
           await filePathsToPlatformFiles(filePaths, withReadStream, withData);
 
-      return FilePickerResult(platformFiles);
+      returnValue = FilePickerResult(platformFiles);
     }
-    return null;
+
+    _freeMemory(openFileNameW);
+    return returnValue;
   }
 
   @override
@@ -59,15 +62,16 @@ class FilePickerWindows extends FilePicker {
         dialogTitle, type, allowedExtensions, defaultFileName, false);
 
     final result = getSaveFileNameW(openFileNameW);
+    String? returnValue;
     if (result == 1) {
-      final filePaths =
-          _extractSelectedFilesFromOpenFileNameW(openFileNameW.ref);
-      final platformFiles =
-          await filePathsToPlatformFiles(filePaths, false, false);
-
-      return platformFiles.first.path;
+      final filePaths = _extractSelectedFilesFromOpenFileNameW(
+        openFileNameW.ref,
+      );
+      returnValue = filePaths.first;
     }
-    return null;
+
+    _freeMemory(openFileNameW);
+    return returnValue;
   }
 
   @override
@@ -186,9 +190,9 @@ class FilePickerWindows extends FilePicker {
           'Failed to convert item identifier list to a file system path.');
     }
 
+    final path = pszPath.toDartString();
     calloc.free(pszPath);
-
-    return pszPath.toDartString();
+    return path;
   }
 
   /// Extracts the list of selected files from the Win32 API struct [OPENFILENAMEW].
@@ -234,5 +238,13 @@ class FilePickerWindows extends FilePicker {
     }
 
     return filePaths;
+  }
+
+  void _freeMemory(Pointer<OPENFILENAMEW> openFileNameW) {
+    calloc.free(openFileNameW.ref.lpstrTitle);
+    calloc.free(openFileNameW.ref.lpstrFile);
+    calloc.free(openFileNameW.ref.lpstrFilter);
+    calloc.free(openFileNameW.ref.lpstrInitialDir);
+    calloc.free(openFileNameW);
   }
 }
