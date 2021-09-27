@@ -10,6 +10,14 @@ This repository contains a Dart package that allows you to use a native file exp
 
 
 
+
+> # :warning: **PLEASE NOTE:**
+>
+> This Dart package has been archived in favor of _file_picker_ by Miguel Pruivo ([github.com/miguelpruivo/flutter_file_picker](https://github.com/miguelpruivo/flutter_file_picker)). All code of this repository has been integrated into Miguel's package. I recommend you to use his package, as I will only provide bug fixes, but will not add any additional features. Starting from version _4.0.0_ Miguel's package can be used without Go/Go Flutter, too. Thank you.
+
+
+
+
 ## Features
 
 * :tada: This package **does not require** [Go Flutter](https://github.com/go-flutter-desktop/go-flutter). This package is written entirely in Dart!!! No dependencies on Go or Go Flutter.
@@ -23,7 +31,6 @@ This repository contains a Dart package that allows you to use a native file exp
 
 
 **:warning: This package does not support Android, iOS, or the web. Please refer to Miguel Pruivo's package [github.com/miguelpruivo/flutter_file_picker](https://github.com/miguelpruivo/flutter_file_picker/) which offers the same functionality for Android, iOS, and the web. I tried my best to provide the same API as Miguel's package.**
-
 
 
 The following screenshots show the file picker dialog on Linux, macOS, and Windows:
@@ -46,7 +53,7 @@ The following screenshots show the file picker dialog on Linux, macOS, and Windo
 ```yaml
 
 dependencies:
-  file_picker_desktop: ^1.1.0
+  file_picker_desktop: ^1.1.1
 
 ```
 

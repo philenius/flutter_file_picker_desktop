@@ -1,3 +1,11 @@
+## 1.1.1
+
+Several bug fixes:
+* Fix file type filter `FileType.any` on Linux to allow the selection of files without file extension
+* Fix expression for file type filter `FileType.custom` on Windows
+* Fix bug on Windows when selecting more than 3 files. Previously, if the user selected multiple (>3 or 4) files, then the file picker dialog would freeze and Flutter would crash.
+* Release dynamically allocated memory in Windows implementation after closing the dialog
+
 ## 1.1.0
 
 * Add new feature from merge request [#7 add save file dialog support](https://github.com/philenius/flutter_file_picker_desktop/pull/7):Credit for the implementation goes to @f69. Thank you.
