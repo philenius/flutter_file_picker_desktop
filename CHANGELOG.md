@@ -1,3 +1,10 @@
+## 1.2.0
+
+Just a bump to:
+* ffi ^2.1.4
+* dart sdk >=3.4.0 <4.0.0
+* path ^1.9.1
+
 ## 1.1.1
 
 Several bug fixes:
