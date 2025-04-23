@@ -103,7 +103,7 @@ class FilePickerLinux extends FilePicker {
       case FileType.audio:
         return '*.mp3 *.wav *.midi *.ogg *.aac';
       case FileType.custom:
-        return '*.' + allowedExtensions!.join(' *.');
+        return '*.${allowedExtensions!.join(' *.')}';
       case FileType.image:
         return '*.bmp *.gif *.jpg *.jpeg *.png';
       case FileType.media:
